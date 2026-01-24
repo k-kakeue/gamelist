@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cheers Online - Rect View</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <style>
+        :root {
+            --table-bg: radial-gradient(circle, #2c1a1a 0%, #110808 100%);
+            --panel-bg: rgba(0, 0, 0, 0.85);
+            --accent: #ffcc00;
+            --success: #2ecc71;
+            --danger: #e74c3c;
+            --glow: 0 0 15px rgba(255, 204, 0, 0.4);
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: var(--table-bg);
+            color: white; margin: 0; 
+            overflow: hidden; touch-action: manipulation;
+            height: 100dvh; width: 100%;
+            display: flex; flex-direction: column;
+        }
+
+        /* --- 初期設定画面 --- */
+        #role-selection {
+            position: fixed; inset: 0; z-index: 100;
+            background: rgba(0,0,0,0.95);
+            display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 15px;
+        }
+        .overlay-box {
+            display: none; flex-direction: column; gap: 15px; align-items: center;
+            background: #222; padding: 25px; border-radius: 20px; border: 1px solid var(--accent);
+            width: 85%; max-width: 320px;
+        }
+        input { padding: 15px; border-radius: 8px; border: none; width: 100%; box-sizing: border-box; text-align: center; font-size: 16px; }
+
+        /* --- 相棒選択モーダル --- */
+        #mate-modal {
+            position: fixed; inset: 0; z-index: 200;
+            background: rgba(0,0,0,0.9);
+            display: none; flex-direction: column; justify-content: center; align-items: center; gap: 20px;
+        }
+        .mate-btn {
+            width: 200px; padding: 20px; font-size: 18px; font-weight: bold;
+            background: transparent; border: 2px solid var(--accent); color: white;
+            border-radius: 10px; cursor: pointer;
+        }
+
+        /* --- ゲーム本編 --- */
+        #game-container { display: none; width: 100%; height: 100%; flex-direction: column; position: relative; }
+        
+        .top-bar {
+            background: var(--panel-bg); padding: 12px 20px;
+            display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333;
+        }
+
+        /* プレイヤーリスト */
+        #player-list {
+            position: absolute; top: 70px; left: 15px; z-index: 5;
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .player-tag {
+            background: var(--panel-bg); padding: 6px 14px; border-radius: 20px;
+            border: 1px solid #444; font-size: 12px; display: flex; align-items: center; gap: 8px;
+            transition: all 0.3s;
+        }
+        .player-tag.is-ready { border-color: var(--success); color: var(--success); box-shadow: 0 0 10px rgba(46, 204, 113, 0.2); }
+        .ready-icon { font-size: 10px; display: none; }
+        .is-ready .ready-icon { display: inline; }
+
+        #table { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 20px; }
+        
+        #instruction-display { text-align: center; margin-bottom: 20px; min-height: 80px; }
+        #action-text { font-size: 28px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; }
+        #desc-text { font-size: 15px; color: #bbb; margin-top: 8px; line-height: 1.4; max-width: 280px; }
+
+        #game-board { 
+            display: flex; flex-direction: column; align-items: center; gap: 25px; width: 100%; 
+        }
+        
+        #card-slot { height: 180px; display: flex; justify-content: center; align-items: center; }
+
+        /* カウンター：横長角丸デザイン */
+        #deck-counter-rect {
+            width: 140px; padding: 10px 0; border-radius: 12px;
+            background: linear-gradient(180deg, rgba(255,255,255,0.08) 0%, rgba(255,255,255,0.02) 100%);
+            border: 1px solid #444;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            position: relative; box-shadow: inset 0 1px 1px rgba(255,255,255,0.1);
+            transition: all 0.3s ease;
+        }
+        .deck-number { font-size: 32px; font-weight: 900; color: #fff; line-height: 1; letter-spacing: 1px; }
+        .deck-unit { font-size: 10px; color: #888; font-weight: bold; margin-top: 4px; letter-spacing: 2px; }
+
+        /* カウントが減った時の演出 */
+        .count-bump { animation: bump 0.3s ease-out; }
+        @keyframes bump {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); color: var(--accent); }
+            100% { transform: scale(1); }
+        }
+
+        .card {
+            width: 120px; height: 170px; background: white; color: black;
+            border-radius: 12px; display: flex; justify-content: center; align-items: center;
+            font-size: 48px; font-weight: bold; border: 4px solid #fff;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.8); position: relative;
+            animation: cardReveal 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes cardReveal { 
+            0% { transform: translateY(30px) scale(0.8); opacity: 0; } 
+            100% { transform: translateY(0) scale(1); opacity: 1; } 
+        }
+        .card.red { color: var(--danger); }
+        .card.special { background: var(--accent); border-color: #fff; color: #000; }
+
+        .controls-wrapper { padding-bottom: 50px; display: flex; justify-content: center; }
+        .main-btn {
+            width: 100px; height: 100px; border-radius: 50%; background: var(--accent);
+            border: 4px solid #fff; color: #000; font-weight: 900; font-size: 18px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.6); cursor: pointer;
+            transition: transform 0.1s;
+        }
+        .main-btn:active { transform: scale(0.95); }
+        .main-btn:disabled { background: #444; color: #777; cursor: not-allowed; border-color: #555; box-shadow: none; }
+
+        .role-btn { width: 240px; padding: 16px; font-size: 16px; border: 2px solid var(--accent); border-radius: 50px; background: transparent; color: white; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <div id="role-selection">
+        <h1 style="letter-spacing: 4px; margin-bottom: 20px; color:var(--accent);">Cheers Online</h1>
+        <div id="initial-buttons" style="display: flex; flex-direction: column; gap: 12px;">
+            <button id="btn-select-host" class="role-btn">CREATE TABLE</button>
+            <button id="btn-show-join" class="role-btn">JOIN TABLE</button>
+        </div>
+        <div id="host-id-area" class="overlay-box">
+            <span style="font-size:12px; color:var(--accent);">IDを仲間に共有</span>
+            <div id="generated-id" style="font-family:monospace; background:#000; padding:12px; border-radius:8px; width:100%; text-align:center; font-size:14px;">...</div>
+            <button id="btn-copy-close" class="role-btn" style="width:100%;">COPY & START</button>
+        </div>
+        <div id="join-input-area" class="overlay-box">
+            <input type="text" id="join-id" placeholder="Table ID を入力">
+            <button id="btn-connect" class="role-btn" style="width:100%;">CONNECT</button>
+            <button id="btn-back" style="background:none; border:none; color:#aaa; font-size:13px; margin-top:10px;">Back</button>
+        </div>
+    </div>
+
+    <div id="mate-modal">
+        <h2 style="color:var(--accent);">SELECT YOUR MATE</h2>
+        <div id="mate-options" style="display:flex; flex-direction:column; gap:10px;"></div>
+    </div>
+
+    <div id="game-container">
+        <div class="top-bar">
+            <span id="player-num-display" style="color:var(--accent); font-weight:bold; font-size:18px;">P?</span>
+            <div id="turn-label" style="background:var(--accent); color:#000; padding:4px 16px; border-radius:20px; font-weight:900; font-size:11px; letter-spacing:1px;">LOBBY</div>
+            <span id="invite-id-small" style="font-size:11px; color:#888; border-bottom:1px solid #555; cursor:pointer;">Copy ID</span>
+        </div>
+        
+        <div id="player-list"><div id="player-items"></div></div>
+
+        <div id="table">
+            <div id="instruction-display">
+                <div id="action-text">Ready?</div>
+                <div id="desc-text">待機中...</div>
+            </div>
+
+            <div id="game-board">
+                <div id="card-slot"></div>
+                <div id="deck-counter-rect">
+                    <div class="deck-number" id="deck-count">54</div>
+                    <div class="deck-unit">REMAINING</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-wrapper">
+            <button id="btn-main" class="main-btn" disabled>WAIT</button>
+        </div>
+    </div>
+
+    <script type="module">
+        const CHEERS_RULES = {
+            'A': { title: 'Waterfall', desc: '全員一斉に飲み始め！引いた人が止めるまで隣の人は止められません。' },
+            '2': { title: 'You', desc: '誰か一人を指名して飲ませます。' },
+            '3': { title: 'Me', desc: '引いた本人が飲みます。' },
+            '4': { title: 'Floor', desc: '全員で床をタッチ！一番遅かった人が飲みます。' },
+            '5': { title: 'Guys', desc: '男性陣、全員乾杯！' },
+            '6': { title: 'Chicks', desc: '女性陣、全員乾杯！' },
+            '7': { title: 'Heaven', desc: '全員で挙手！一番遅かった人が飲みます。' },
+            '8': { title: 'Mate', desc: '「相棒」を一人指名。以後、自分が飲む時は相棒も飲みます。' },
+            '9': { title: 'Rhyme', desc: '韻踏みゲーム。言えなくなったら飲みます。' },
+            '10': { title: 'Categories', desc: '古今東西ゲーム。詰まった人が飲みます。' },
+            'J': { title: 'Never Have I Ever', desc: '「〜したことない」を発表。経験者は飲みます。' },
+            'Q': { title: 'Question Master', desc: 'この人に質問を返すと飲み。誰かがQを引くまで有効. Kを引くまで継続します。' },
+            'K': { title: 'Make a Rule', desc: '新しいルールを創る。破った人は飲みます。' },
+            'JO': { title: 'CHEERS!!', desc: '幸運！自分以外の全員が飲みます。' },
+            'SK': { title: 'Skull', desc: '不幸！引いた本人が2杯飲みます。' }
+        };
+
+        const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
+        const SUITS = [{s:'♠',r:false}, {s:'♥',r:true}, {s:'♦',r:true}, {s:'♣',r:false}];
+        
+        const state = { players: [], deck: [], currentTurn: 1, isStarted: false, lastCard: null, activePlayerNum: null };
+        let peer, connections = [], hostConn = null, isHost = false, myNum = null, currentID = "";
+
+        document.getElementById('btn-show-join').onclick = () => { document.getElementById('initial-buttons').style.display = 'none'; document.getElementById('join-input-area').style.display = 'flex'; };
+        document.getElementById('btn-back').onclick = () => { document.getElementById('initial-buttons').style.display = 'flex'; document.getElementById('join-input-area').style.display = 'none'; };
+        document.getElementById('btn-select-host').onclick = () => { isHost = true; document.getElementById('initial-buttons').style.display = 'none'; document.getElementById('host-id-area').style.display = 'flex'; startPeer(true); };
+        document.getElementById('btn-copy-close').onclick = () => { navigator.clipboard.writeText(currentID); document.getElementById('role-selection').style.display = 'none'; document.getElementById('game-container').style.display = 'flex'; updateUI(); };
+        document.getElementById('btn-connect').onclick = () => { const id = document.getElementById('join-id').value.trim(); if(id) startPeer(false, id); };
+
+        function startPeer(hostMode, targetId = null) {
+            peer = new Peer();
+            peer.on('open', (id) => {
+                currentID = id;
+                if(hostMode) {
+                    document.getElementById('generated-id').innerText = id;
+                    state.players = [{num: 1, id: id, ready: true}];
+                    myNum = 1;
+                } else {
+                    document.getElementById('role-selection').style.display = 'none';
+                    document.getElementById('game-container').style.display = 'flex';
+                    hostConn = peer.connect(targetId);
+                    setupConnection(hostConn);
+                }
+            });
+            if(hostMode) {
+                peer.on('connection', conn => {
+                    if (state.players.length >= 4 || state.isStarted) { setTimeout(() => conn.close(), 500); return; }
+                    connections.push(conn);
+                    setupConnection(conn);
+                });
+            }
+        }
+
+        function setupConnection(conn) {
+            conn.on('open', () => { if(isHost) { state.players.push({num: state.players.length + 1, id: conn.peer, ready: false}); broadcast(); } });
+            conn.on('data', data => {
+                if(data.type === 'SYNC') { 
+                    const oldLastCard = JSON.stringify(state.lastCard);
+                    Object.assign(state, data.state); 
+                    const me = state.players.find(p => p.id === peer.id); 
+                    if(me) myNum = me.num; 
+
+                    if (state.activePlayerNum === myNum && JSON.stringify(state.lastCard) !== oldLastCard) {
+                        if (state.lastCard && state.lastCard.v === '8') showMateModal();
+                    }
+                    updateUI(); 
+                }
+                if(isHost) {
+                    if(data.type === 'ACTION_READY') { 
+                        const p = state.players.find(x => x.num === data.num); 
+                        if(p) p.ready = !p.ready; 
+                        broadcast(); 
+                    }
+                    if(data.type === 'ACTION_DRAW') handleDraw();
+                }
+            });
+            conn.on('close', () => {
+                if(isHost) {
+                    state.players = state.players.filter(p => p.id !== conn.peer);
+                    state.players.forEach((p, i) => p.num = i + 1);
+                    broadcast();
+                }
+            });
+        }
+
+        function broadcast() { if(isHost) { connections.forEach(c => c.send({type: 'SYNC', state})); updateUI(); } }
+
+        function initGame() {
+            if (state.players.length < 2) return;
+            state.deck = [];
+            SUITS.forEach(s => RANKS.forEach(v => state.deck.push({v, s:s.s, r:s.r})));
+            state.deck.push({v: 'JO', s: '✨', r: false, special: true}, {v: 'SK', s: '💀', r: true, special: true});
+            state.deck.sort(() => Math.random() - 0.5);
+            const randomIndex = Math.floor(Math.random() * state.players.length);
+            state.currentTurn = state.players[randomIndex].num;
+            state.isStarted = true; state.lastCard = null; state.activePlayerNum = null;
+            broadcast();
+        }
+
+        function handleDraw() {
+            if(state.deck.length === 0) { state.isStarted = false; broadcast(); return; }
+            state.activePlayerNum = state.currentTurn;
+            state.lastCard = state.deck.pop();
+            if (isHost && state.activePlayerNum === myNum && state.lastCard.v === '8') showMateModal();
+            state.currentTurn = (state.currentTurn % state.players.length) + 1;
+            broadcast();
+        }
+
+        function showMateModal() {
+            const modal = document.getElementById('mate-modal');
+            const options = document.getElementById('mate-options');
+            options.innerHTML = "";
+            state.players.filter(p => p.num !== myNum).forEach(p => {
+                const btn = document.createElement('button');
+                btn.className = "mate-btn";
+                btn.innerText = `P${p.num}`;
+                btn.onclick = () => { modal.style.display = "none"; };
+                options.appendChild(btn);
+            });
+            modal.style.display = "flex";
+        }
+
+        function updateUI() {
+            const me = state.players.find(p => p.num === myNum);
+            document.getElementById('player-num-display').innerText = `P${myNum||'?'}`;
+            
+            // プレイヤーリスト更新
+            document.getElementById('player-items').innerHTML = state.players.map(p => `
+                <div class="player-tag ${p.ready ? 'is-ready' : ''}">
+                    <span>P${p.num}</span>
+                    <span class="ready-icon">✓</span>
+                </div>
+            `).join('');
+
+            // カウンターの数字更新とアニメーション適用
+            const countEl = document.getElementById('deck-count');
+            const rectEl = document.getElementById('deck-counter-rect');
+            const currentCount = state.isStarted ? state.deck.length : (state.deck.length > 0 ? state.deck.length : 54);
+            
+            if(countEl.innerText != currentCount) {
+                countEl.innerText = currentCount;
+                countEl.classList.remove('count-bump');
+                void countEl.offsetWidth; // リフロー強制
+                countEl.classList.add('count-bump');
+            }
+
+            // 残り少なくなったら光らせる
+            if(state.isStarted && currentCount <= 5) {
+                rectEl.style.borderColor = "var(--danger)";
+                rectEl.style.boxShadow = "0 0 15px var(--danger)";
+            } else {
+                rectEl.style.borderColor = "#444";
+                rectEl.style.boxShadow = "inset 0 1px 1px rgba(255,255,255,0.1)";
+            }
+
+            const mainBtn = document.getElementById('btn-main');
+            if(!state.isStarted) {
+                const allReady = state.players.length >= 2 && state.players.every(p => p.ready);
+                if (isHost) {
+                    mainBtn.innerText = state.players.length < 2 ? "WAIT" : "START";
+                    mainBtn.disabled = !allReady;
+                } else {
+                    mainBtn.innerText = me?.ready ? "READY!" : "READY?";
+                    mainBtn.disabled = !myNum;
+                }
+                document.getElementById('turn-label').innerText = "LOBBY";
+                document.getElementById('card-slot').innerHTML = "";
+            } else {
+                const isMyTurn = state.currentTurn === myNum;
+                mainBtn.innerText = isMyTurn ? "DRAW" : "WAIT";
+                mainBtn.disabled = !isMyTurn;
+                document.getElementById('turn-label').innerText = isMyTurn ? "YOUR TURN" : `P${state.currentTurn}'S TURN`;
+                
+                if(state.lastCard) {
+                    const rule = CHEERS_RULES[state.lastCard.v];
+                    document.getElementById('action-text').innerText = rule.title;
+                    document.getElementById('desc-text').innerText = rule.desc;
+                    document.getElementById('card-slot').innerHTML = ""; 
+                    document.getElementById('card-slot').appendChild(createCardElement(state.lastCard));
+                }
+            }
+        }
+
+        function createCardElement(c) {
+            const d = document.createElement('div');
+            d.className = `card ${c.r ? 'red' : ''} ${c.special ? 'special' : ''}`;
+            d.innerHTML = `<span style="position:absolute;top:10px;left:12px;font-size:20px">${c.s}</span>${c.v}`;
+            return d;
+        }
+
+        document.getElementById('btn-main').onclick = () => {
+            if(!state.isStarted) { 
+                if(isHost) initGame(); 
+                else hostConn.send({type: 'ACTION_READY', num: myNum}); 
+            } else { 
+                if(isHost) handleDraw(); 
+                else hostConn.send({type: 'ACTION_DRAW', num: myNum}); 
+            }
+        };
+
+        document.getElementById('invite-id-small').onclick = () => { 
+            navigator.clipboard.writeText(currentID); 
+            const el = document.getElementById('invite-id-small');
+            el.innerText = "COPIED!";
+            setTimeout(() => el.innerText = "Copy ID", 2000);
+        };
+    </script>
+</body>
+</html>
