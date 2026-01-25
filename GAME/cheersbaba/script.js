@@ -48,14 +48,22 @@ function initPeer(targetId = null) {
     peer.on('open', id => {
         myId = id;
         if (isHost) {
-            setTimeout(() => {
-                const joinUrl = `${window.location.origin}${window.location.pathname}?id=${id}`;
-                alert("テーブル準備完了！「OK」で招待URLをコピーします。");
-                navigator.clipboard.writeText(joinUrl).then(() => {
-                    alert("コピーしました！LINE等に貼ってください。");
-                    startHostLobby();
-                }).catch(() => { prompt("以下をコピー：", joinUrl); startHostLobby(); });
-            }, 500);
+            const joinUrl = `${window.location.origin}${window.location.pathname}?id=${id}`;
+            
+            // confirmで「OK」ならコピーを実行
+            if (confirm("テーブルを準備しました。\n招待URLをコピーしますか？")) {
+                navigator.clipboard.writeText(joinUrl)
+                    .then(() => {
+                        console.log("Copied!");
+                        startHostLobby();
+                    })
+                    .catch(() => {
+                        prompt("コピーに失敗しました。以下を手動でコピー：", joinUrl);
+                        startHostLobby();
+                    });
+            } else {
+                startHostLobby(); // キャンセルしてもロビーには移動
+            }
         } else if (targetId) {
             hostConn = peer.connect(targetId, { reliable: true }); 
             setupConnection(hostConn);
