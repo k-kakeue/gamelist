@@ -1,5 +1,5 @@
 /**
- * Cheers BABA - Optimized Single-Click Hosting
+ * Cheers BABA - GameOver & Reset Update
  */
 
 const MISSION_RULES = {
@@ -19,58 +19,48 @@ const MISSION_RULES = {
 };
 
 const RANKS = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
-const state = { players: [], currentTurn: 0, isStarted: false, lastAction: null };
+// stateにisGameOverを追加
+let state = { players: [], currentTurn: 0, isStarted: false, lastAction: null, isGameOver: false };
 let peer, connections = [], hostConn = null, isHost = false, myId = "";
 
-// --- ページ読み込み時の自動接続（参加者用） ---
 window.onload = () => {
     const params = new URLSearchParams(window.location.search);
     const targetRoomId = params.get('id');
     if (targetRoomId) {
         isHost = false;
         initPeer(targetRoomId);
-        document.getElementById('initial-buttons').innerHTML = '<p style="color:var(--accent);">Connecting to Table...</p>';
+        document.getElementById('initial-buttons').innerHTML = '<p style="color:var(--accent);">Connecting...</p>';
     }
 };
 
 const shuffleHand = (hand) => hand.sort(() => Math.random() - 0.5);
 
-// --- ホスト作成：ボタン一発で発行・コピー・移動 ---
+// --- ホスト作成 ---
 document.getElementById('btn-select-host').onclick = () => { 
     isHost = true;
-    document.getElementById('btn-select-host').innerText = "Generating...";
-    document.getElementById('btn-select-host').disabled = true;
+    document.getElementById('btn-select-host').innerText = "Preparing...";
     initPeer(); 
 };
 
-// --- P2P通信セクション ---
 function initPeer(targetId = null) {
-    peer = new Peer({
-        debug: 1,
-        config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] }
-    });
+    peer = new Peer({ debug: 1, config: { iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] } });
 
     peer.on('open', id => {
         myId = id;
-        
         if (isHost) {
-            // ホストの場合：URLをコピーしてロビーへ
-            const joinUrl = `${window.location.origin}${window.location.pathname}?id=${id}`;
-            navigator.clipboard.writeText(joinUrl).then(() => {
-                alert("招待URLをコピーしました！\nLINE等に貼り付けて参加者を招待してください。");
-                startHostLobby();
-            }).catch(() => {
-                prompt("招待URLをコピーしてください：", joinUrl);
-                startHostLobby();
-            });
+            setTimeout(() => {
+                const joinUrl = `${window.location.origin}${window.location.pathname}?id=${id}`;
+                alert("テーブル準備完了！「OK」で招待URLをコピーします。");
+                navigator.clipboard.writeText(joinUrl).then(() => {
+                    alert("コピーしました！LINE等に貼ってください。");
+                    startHostLobby();
+                }).catch(() => { prompt("以下をコピー：", joinUrl); startHostLobby(); });
+            }, 500);
         } else if (targetId) {
-            // 参加者の場合：ホストへ接続
             hostConn = peer.connect(targetId, { reliable: true }); 
             setupConnection(hostConn);
             startGameContainer(); 
         }
-        
-        startHeartbeat();
     });
 
     peer.on('connection', conn => {
@@ -80,11 +70,9 @@ function initPeer(targetId = null) {
             if (!state.players.find(p => p.id === conn.peer)) {
                 state.players.push({id: conn.peer, hand: [], isOut: false}); 
             }
-            // プレイヤー参加を検知して同期
             setTimeout(() => { broadcast(); updateUI(); }, 800); 
         }
     });
-
     peer.on('disconnected', () => peer.reconnect());
 }
 
@@ -94,23 +82,11 @@ function startHostLobby() {
     updateUI();
 }
 
-function startHeartbeat() {
-    setInterval(() => {
-        if (peer && !peer.disconnected && peer.socket) {
-            peer.socket.send({ type: 'HEARTBEAT' });
-        }
-    }, 15000);
-}
-
 function setupConnection(conn) {
     conn.on('data', data => {
-        if(data.type === 'SYNC') { 
-            Object.assign(state, data.state); 
-            updateUI(); 
-        }
-        if(isHost && data.type === 'DRAW') {
-            handleDraw(data.fromIdx, data.cardIdx, data.toId);
-        }
+        if(data.type === 'SYNC') { Object.assign(state, data.state); updateUI(); }
+        if(isHost && data.type === 'DRAW') handleDraw(data.fromIdx, data.cardIdx, data.toId);
+        if(isHost && data.type === 'RESET') resetGame();
     });
 }
 
@@ -126,30 +102,25 @@ function startGameContainer() {
     document.getElementById('game-container').style.display = 'flex';
 }
 
-// --- ゲームロジックセクション ---
-
+// --- ゲーム開始 ---
 document.getElementById('btn-start-game').onclick = () => {
-    if(!isHost || state.players.length < 2) return alert("2人以上必要です");
+    if(!isHost || state.players.length < 2) return;
+    
+    state.isGameOver = false;
+    state.isStarted = true;
+    state.lastAction = null;
     
     let deck = [];
     ['♠','♥','♦','♣'].forEach(s => RANKS.forEach(v => deck.push({v, s, r: (s==='♥'||s==='♦')})));
     deck.push({v: 'JK', s: '🃏', r: false});
     deck.sort(() => Math.random() - 0.5);
     
+    state.players.forEach(p => { p.hand = []; p.isOut = false; });
     let pIdx = 0;
-    while(deck.length > 0) { 
-        state.players[pIdx].hand.push(deck.pop()); 
-        pIdx = (pIdx + 1) % state.players.length; 
-    }
+    while(deck.length > 0) { state.players[pIdx].hand.push(deck.pop()); pIdx = (pIdx + 1) % state.players.length; }
+    state.players.forEach(p => { p.hand = discardInitialPairs(p.hand); shuffleHand(p.hand); });
     
-    state.players.forEach(p => { 
-        p.hand = discardInitialPairs(p.hand); 
-        shuffleHand(p.hand); 
-    });
-    
-    state.isStarted = true; 
-    state.currentTurn = 0; 
-    state.lastAction = null;
+    state.currentTurn = 0;
     broadcast();
 };
 
@@ -182,19 +153,30 @@ function handleDraw(fromIdx, cardIdx, toId) {
     shuffleHand(fromPlayer.hand);
     shuffleHand(toPlayer.hand);
     state.players.forEach(p => { if(p.hand.length === 0) p.isOut = true; });
-    
-    let nextTurn = (state.currentTurn + 1) % state.players.length;
-    let guard = 0;
-    while(state.players[nextTurn].isOut && guard < state.players.length) {
-        nextTurn = (nextTurn + 1) % state.players.length;
-        guard++;
+
+    // 決着判定
+    const activePlayers = state.players.filter(p => !p.isOut);
+    if (activePlayers.length <= 1) {
+        state.isGameOver = true;
+        state.isStarted = false;
+    } else {
+        let nextTurn = (state.currentTurn + 1) % state.players.length;
+        while(state.players[nextTurn].isOut) { nextTurn = (nextTurn + 1) % state.players.length; }
+        state.currentTurn = nextTurn;
     }
-    state.currentTurn = nextTurn; 
     broadcast();
 }
 
-// --- UI更新セクション ---
+// リセット処理
+function resetGame() {
+    state.isStarted = false;
+    state.isGameOver = false;
+    state.lastAction = null;
+    state.players.forEach(p => { p.hand = []; p.isOut = false; });
+    broadcast();
+}
 
+// --- UI更新 ---
 function updateUI() {
     const meIdx = state.players.findIndex(p => p.id === myId);
     if(meIdx === -1) return;
@@ -202,74 +184,74 @@ function updateUI() {
     
     document.getElementById('my-p-num').innerText = `P${meIdx + 1}`;
     
-    // ホストかつ未開始ならスタートボタンを表示
-    const startBtn = document.getElementById('btn-start-game');
-    if(isHost && !state.isStarted) {
-        startBtn.style.display = 'flex';
+    // スタートボタン表示
+    document.getElementById('btn-start-game').style.display = (isHost && !state.isStarted && !state.isGameOver) ? 'flex' : 'none';
+
+    // 敗北演出（ミッションオーバーレイを流用）
+    const missionOverlay = document.getElementById('mission-overlay');
+    if (state.isGameOver) {
+        const loser = state.players.find(p => p.hand.some(c => c.v === 'JK')) || me;
+        const isMeLoser = (loser.id === myId);
+        
+        document.getElementById('m-rank').innerText = "LOSE";
+        document.getElementById('m-title').innerText = isMeLoser ? "YOU LOST..." : `P${state.players.indexOf(loser)+1} LOST`;
+        document.getElementById('m-desc').innerText = isMeLoser ? "JOKERが残りました。罰ゲームとして1杯飲んでください！" : "決着がつきました！敗者に乾杯！";
+        
+        // Got Itボタンを「もう一度遊ぶ」に書き換える（ホストのみ操作可能に）
+        const closeBtn = document.getElementById('btn-mission-close');
+        if (isHost) {
+            closeBtn.innerText = "RESET GAME";
+            closeBtn.onclick = () => resetGame();
+        } else {
+            closeBtn.innerText = "WAITING FOR HOST...";
+            closeBtn.onclick = null;
+        }
+        missionOverlay.style.display = 'flex';
+    } else if (state.lastAction && state.lastAction.type === 'MISSION') {
+        // 通常のミッション表示
+        const mission = MISSION_RULES[state.lastAction.rank];
+        document.getElementById('m-rank').innerText = state.lastAction.rank;
+        document.getElementById('m-title').innerText = mission.title;
+        document.getElementById('m-desc').innerText = mission.desc;
+        const closeBtn = document.getElementById('btn-mission-close');
+        closeBtn.innerText = "Got It";
+        closeBtn.onclick = () => { 
+            state.lastAction = null; 
+            if(isHost) broadcast(); 
+            document.getElementById('mission-overlay').style.display = 'none'; 
+        };
+        missionOverlay.style.display = 'flex';
     } else {
-        startBtn.style.display = 'none';
+        missionOverlay.style.display = 'none';
     }
 
+    // ターン中演出
     const isMyTurn = state.isStarted && state.currentTurn === meIdx && !me.isOut;
-    if(isMyTurn) document.body.classList.add('my-turn-active'); 
-    else document.body.classList.remove('my-turn-active');
+    document.body.className = isMyTurn ? 'my-turn-active' : '';
     
-    const statusList = document.getElementById('player-status-list');
-    statusList.innerHTML = state.players.map((p, i) => `
+    document.getElementById('player-status-list').innerHTML = state.players.map((p, i) => `
         <div class="p-tag ${i === state.currentTurn && state.isStarted ? 'active' : ''} ${p.isOut ? 'is-out' : ''}">
             P${i+1}: ${p.hand.length}枚
         </div>`).join('');
     
-    const myHandEl = document.getElementById('my-hand');
-    myHandEl.innerHTML = me.hand.map(c => `
-        <div class="card ${c.r ? 'red' : ''} ${c.v === 'JK' ? 'joker' : ''}">
-            <span style="font-size:8px; position:absolute; top:2px; left:3px;">${c.s || ''}</span>${c.v}
-        </div>`).join('');
+    document.getElementById('my-hand').innerHTML = me.hand.map(c => `
+        <div class="card ${c.r ? 'red' : ''} ${c.v === 'JK' ? 'joker' : ''}">${c.v}</div>`).join('');
     
+    const enemyHandEl = document.getElementById('enemy-hand');
     if(state.isStarted && !me.isOut) {
         let targetIdx = (meIdx + 1) % state.players.length;
-        let guard = 0;
-        while(state.players[targetIdx].isOut && targetIdx !== meIdx && guard < state.players.length) {
-            targetIdx = (targetIdx + 1) % state.players.length;
-            guard++;
-        }
-        
+        while(state.players[targetIdx].isOut && targetIdx !== meIdx) { targetIdx = (targetIdx + 1) % state.players.length; }
         const target = state.players[targetIdx];
-        document.getElementById('turn-label').innerText = isMyTurn ? "YOUR TURN" : `PLAYER ${state.currentTurn+1}'S TURN`;
-        document.getElementById('target-info').innerText = isMyTurn ? `PICK FROM P${targetIdx+1}` : "WAITING...";
-        
-        const enemyHandEl = document.getElementById('enemy-hand');
-        if (target && target.hand) {
-            enemyHandEl.innerHTML = target.hand.map((_, i) => `
-                <div class="card back ${isMyTurn ? 'selectable' : ''}" onclick="window.requestDraw(${targetIdx}, ${i})"></div>
-            `).join('');
-        }
-    }
-    
-    const missionOverlay = document.getElementById('mission-overlay');
-    if(state.lastAction && state.lastAction.type === 'MISSION') {
-        const mission = MISSION_RULES[state.lastAction.rank];
-        if(mission) {
-            document.getElementById('m-rank').innerText = state.lastAction.rank;
-            document.getElementById('m-title').innerText = mission.title;
-            document.getElementById('m-desc').innerText = mission.desc;
-            missionOverlay.style.display = 'flex';
-        }
+        document.getElementById('turn-label').innerText = isMyTurn ? "YOUR TURN" : `P${state.currentTurn+1}'S TURN`;
+        enemyHandEl.innerHTML = target.hand.map((_, i) => `
+            <div class="card back ${isMyTurn ? 'selectable' : ''}" onclick="window.requestDraw(${targetIdx}, ${i})"></div>`).join('');
     } else {
-        missionOverlay.style.display = 'none';
+        enemyHandEl.innerHTML = "";
     }
 }
 
 window.requestDraw = (fromIdx, cardIdx) => {
-    const myIdx = state.players.findIndex(p => p.id === myId);
-    if(state.currentTurn !== myIdx) return;
+    if(state.currentTurn !== state.players.findIndex(p => p.id === myId)) return;
     if(isHost) handleDraw(fromIdx, cardIdx, myId);
     else hostConn.send({ type: 'DRAW', fromIdx, cardIdx, toId: myId });
-};
-
-document.getElementById('btn-mission-close').onclick = () => { 
-    state.lastAction = null; // ミッションを閉じたことを同期するために状態をクリア
-    if(isHost) broadcast();
-    else hostConn.send({ type: 'SYNC', state }); // 参加者の場合はホストに通知（簡易化のためSYNCを利用）
-    document.getElementById('mission-overlay').style.display = 'none'; 
 };
