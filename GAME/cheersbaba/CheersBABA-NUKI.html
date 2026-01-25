@@ -12,19 +12,15 @@
     <div id="role-selection">
         <h1 class="main-title">CHEERS BABA</h1>
         <div id="initial-buttons" class="btn-group">
-            <button id="btn-select-host" class="gold-btn">ホスト作成</button>
-            <button id="btn-show-join" class="outline-btn">プレイヤー参加</button>
+            <button id="btn-select-host" class="gold-btn">Create Table</button>
+            <p id="wait-msg" style="font-size: 10px; color: #777; margin-top: 20px;">
+                URLからアクセスした場合は自動で接続されます
+            </p>
         </div>
 
-        <div id="host-id-area" class="overlay-box">
+        <div id="host-id-area" class="overlay-box" style="display:none;">
             <div id="generated-id" class="id-display">...</div>
-            <button id="btn-copy-start" class="gold-btn">Copy & Lobby</button>
-        </div>
-
-        <div id="join-input-area" class="overlay-box">
-            <input type="text" id="join-id" placeholder="Enter Table ID">
-            <button id="btn-connect" class="gold-btn">Connect</button>
-            <button onclick="location.reload()" class="outline-btn no-border">Cancel</button>
+            <button id="btn-copy-retry" class="outline-btn">Copy URL Again</button>
         </div>
     </div>
 
@@ -35,7 +31,7 @@
         <button id="btn-mission-close" class="gold-btn small-width">Got It</button>
     </div>
 
-    <div id="game-container">
+    <div id="game-container" style="display:none;">
         <div class="top-bar">
             <span id="my-p-num" class="p-badge">P?</span>
             <span id="turn-label" class="status-label">WAITING LOBBY</span>
@@ -49,8 +45,8 @@
         <div id="bottom-controls">
             <div id="player-status-list"></div>
             <div id="my-hand"></div>
-            <div id="host-action-area">
-                <button id="btn-start-game" class="gold-btn full-width hidden">Start Party</button>
+            <div id="host-action-area" style="padding: 10px 20px;">
+                <button id="btn-start-game" class="gold-btn full-width" style="display:none;">Start Game</button>
             </div>
         </div>
     </div>
