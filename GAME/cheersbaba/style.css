@@ -1,0 +1,149 @@
+:root {
+    --bg-gradient: radial-gradient(circle at center, #5d0f0f 0%, #1a0505 100%);
+    --accent: #d4af37;
+    --accent-light: #f1d575;
+    --accent-dark: #a68a2d;
+    --accent-glow: rgba(212, 175, 55, 0.4);
+    --card-front: #fdfaf0;
+    --card-back: #800000;
+}
+
+body {
+    font-family: 'Times New Roman', serif;
+    background: var(--bg-gradient);
+    color: #f0f0f0; margin: 0; overflow: hidden;
+    height: 100dvh; width: 100%;
+    display: flex; flex-direction: column;
+}
+
+body.my-turn-active { box-shadow: inset 0 0 100px var(--accent-glow); transition: 0.6s; }
+
+/* レイアウト補助クラス */
+.hidden { display: none !important; }
+.full-width { width: 100% !important; }
+.small-width { width: 180px !important; }
+.no-border { border: none !important; }
+
+/* ロビー画面 */
+#role-selection { 
+    position: fixed; inset: 0; z-index: 1000; 
+    background: rgba(0,0,0,0.97); 
+    display: flex; flex-direction: column; 
+    justify-content: center; align-items: center;
+    width: 100%; box-sizing: border-box;
+    padding: 20px;
+}
+
+.btn-group { display: flex; flex-direction: column; gap: 20px; width: 100%; align-items: center; }
+
+.main-title { 
+    font-size: clamp(28px, 8vw, 42px);
+    color: var(--accent); 
+    letter-spacing: clamp(4px, 2vw, 12px);
+    margin-bottom: 40px; 
+    font-style: italic; 
+    text-shadow: 0 0 15px var(--accent-glow);
+    text-align: center;
+    width: 100%;
+    white-space: nowrap;
+}
+
+.overlay-box { 
+    display: none; flex-direction: column; gap: 20px; align-items: center; 
+    background: #2a1515; padding: clamp(20px, 5vw, 35px); 
+    border-radius: 4px; border: 1px solid var(--accent); 
+    width: 90%; max-width: 320px; 
+    box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+    box-sizing: border-box;
+}
+
+.id-display {
+    font-family: monospace; background: #000; padding: 18px; 
+    border: 1px solid #333; width: 100%; text-align: center; 
+    color: var(--accent); font-size: 18px; box-sizing: border-box;
+}
+
+.gold-btn {
+    width: 100%; max-width: 260px; height: 65px; 
+    cursor: pointer; border: none; border-radius: 4px;
+    background: linear-gradient(145deg, var(--accent-light) 0%, var(--accent) 50%, var(--accent-dark) 100%);
+    color: #1a0505; font-weight: 900; font-size: 14px; text-transform: uppercase; 
+    letter-spacing: 4px; position: relative; 
+    box-shadow: 0 4px 0 #8c732a, 0 8px 15px rgba(0,0,0,0.4);
+    transition: all 0.1s; display: flex; justify-content: center; align-items: center;
+    box-sizing: border-box;
+}
+
+.gold-btn::after {
+    content: ''; position: absolute; top: 2px; left: 2px; right: 2px; height: 40%;
+    background: linear-gradient(to bottom, rgba(255,255,255,0.4) 0%, transparent 100%);
+    border-radius: 2px; pointer-events: none;
+}
+
+.gold-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 #8c732a, 0 4px 8px rgba(0,0,0,0.4); }
+
+.outline-btn { 
+    background: transparent; border: 1px solid var(--accent); color: var(--accent); 
+    padding: 12px 30px; font-size: 11px; letter-spacing: 2px; cursor: pointer; 
+    margin-top: 20px; border-radius: 2px; text-transform: uppercase;
+}
+
+/* ゲームエリア */
+#game-container { display: none; height: 100%; flex-direction: column; }
+
+.top-bar { padding: 15px 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(212,175,55,0.25); }
+
+.p-badge { color: var(--accent); font-weight: bold; border: 1px solid var(--accent); padding: 4px 12px; font-size: 13px; }
+
+.status-label { font-size: 12px; letter-spacing: 3px; color: #888; }
+
+#table-area { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+
+.hint-text { font-size: 10px; color: var(--accent); margin-bottom: 25px; letter-spacing: 2px; opacity: 0.7; }
+
+#enemy-hand { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; max-width: 95%; }
+
+.card {
+    width: 55px; height: 80px; background: var(--card-front); color: #111;
+    border-radius: 4px; border: 1px solid #ccc;
+    display: flex; flex-direction: column; justify-content: center; align-items: center;
+    font-weight: bold; font-size: 18px; position: relative; box-shadow: 2px 5px 10px rgba(0,0,0,0.4);
+}
+
+.card.back { background: var(--card-back); background-image: radial-gradient(var(--accent) 1px, transparent 0); background-size: 8px 8px; border: 2px solid #fff; cursor: pointer; }
+
+.my-turn-active .card.back.selectable { border-color: var(--accent); animation: pulse 1.5s infinite; }
+
+@keyframes pulse { 0%, 100% { box-shadow: 0 0 5px var(--accent); } 50% { box-shadow: 0 0 25px var(--accent); transform: scale(1.05); } }
+
+/* コントロール・ステータス */
+#bottom-controls { background: #140a0a; border-top: 1px solid var(--accent); padding-bottom: 35px; }
+
+#player-status-list { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: #222; }
+
+.p-tag { font-size: 9px; padding: 10px 2px; text-align: center; color: #777; background: #000; position: relative; }
+
+.p-tag.active { color: var(--accent); background: rgba(212,175,55,0.1); font-weight: bold; }
+
+.p-tag.is-out { text-decoration: line-through; opacity: 0.2; }
+
+.joker-warning { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 14px; animation: bounce 1s infinite; }
+
+#my-hand { display: flex; justify-content: center; padding: 25px 10px; gap: -15px; min-height: 90px; overflow-x: auto; }
+
+#my-hand .card { margin-left: -18px; transition: 0.2s; border-color: #eee; }
+
+#host-action-area { padding: 10px 20px; display: flex; justify-content: center; }
+
+/* ミッションUI */
+#mission-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.98);
+    display: none; flex-direction: column; justify-content: center; align-items: center;
+    z-index: 2000; text-align: center; padding: 40px; border: 1px solid var(--accent); margin: 20px;
+}
+
+.m-rank-text { font-size: 80px; color: var(--accent); font-family: 'Times New Roman', serif; }
+.m-title-text { font-size: 28px; margin: 15px 0; letter-spacing: 2px; }
+.m-desc-text { font-size: 16px; color: #bbb; line-height: 1.8; margin-bottom: 45px; max-width: 300px; }
+
+input { padding: 16px; border: 1px solid #444; width: 100%; box-sizing: border-box; text-align: center; font-size: 16px; background: rgba(0,0,0,0.6); color: white; margin-bottom: 5px; }

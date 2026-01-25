@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cheers BABA - Luxury Lounge</title>
+    <script src="https://unpkg.com/peerjs@1.5.2/dist/peerjs.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div id="role-selection">
+        <h1 class="main-title">CHEERS BABA</h1>
+        <div id="initial-buttons" class="btn-group">
+            <button id="btn-select-host" class="gold-btn">ホスト作成</button>
+            <button id="btn-show-join" class="outline-btn">プレイヤー参加</button>
+        </div>
+
+        <div id="host-id-area" class="overlay-box">
+            <div id="generated-id" class="id-display">...</div>
+            <button id="btn-copy-start" class="gold-btn">Copy & Lobby</button>
+        </div>
+
+        <div id="join-input-area" class="overlay-box">
+            <input type="text" id="join-id" placeholder="Enter Table ID">
+            <button id="btn-connect" class="gold-btn">Connect</button>
+            <button onclick="location.reload()" class="outline-btn no-border">Cancel</button>
+        </div>
+    </div>
+
+    <div id="mission-overlay">
+        <div id="m-rank" class="m-rank-text">A</div>
+        <div id="m-title" class="m-title-text">Waterfall</div>
+        <div id="m-desc" class="m-desc-text">Description</div>
+        <button id="btn-mission-close" class="gold-btn small-width">Got It</button>
+    </div>
+
+    <div id="game-container">
+        <div class="top-bar">
+            <span id="my-p-num" class="p-badge">P?</span>
+            <span id="turn-label" class="status-label">WAITING LOBBY</span>
+        </div>
+
+        <div id="table-area">
+            <div id="target-info" class="hint-text">SELECT CARD FROM PLAYER</div>
+            <div id="enemy-hand"></div>
+        </div>
+
+        <div id="bottom-controls">
+            <div id="player-status-list"></div>
+            <div id="my-hand"></div>
+            <div id="host-action-area">
+                <button id="btn-start-game" class="gold-btn full-width hidden">Start Party</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js" type="module"></script>
+</body>
+</html>
