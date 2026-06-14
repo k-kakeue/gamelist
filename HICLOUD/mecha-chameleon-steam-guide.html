@@ -1,0 +1,765 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ハイクラウド かくれんぼ2026大会</title>
+  <meta property="og:title" content="ハイクラウド かくれんぼ2026大会">
+  <meta property="og:description" content="社内大会『めっちゃカメレオン』の操作ガイドとルール・スケジュール。">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="Gemini_mecha-chameleon-cover.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="ハイクラウド かくれんぼ2026大会">
+  <meta name="twitter:description" content="社内大会『めっちゃカメレオン』の操作ガイドとルール・スケジュール。">
+  <meta name="twitter:image" content="Gemini_mecha-chameleon-cover.png">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;600;800;900&display=swap');
+
+    :root {
+      --bg-base: #020617;
+      --bg-surface: rgba(15, 23, 42, 0.6);
+      --bg-surface-hover: rgba(30, 41, 59, 0.8);
+      --border: rgba(255, 255, 255, 0.08);
+      --accent: #ff5e00;
+      --accent-glow: rgba(255, 94, 0, 0.4);
+      --accent2: #00e1ff;
+      --accent2-glow: rgba(0, 225, 255, 0.4);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      color: var(--text-main);
+      background-color: var(--bg-base);
+      background-image: 
+        radial-gradient(circle at top right, rgba(255, 94, 0, 0.1), transparent 40%),
+        radial-gradient(circle at bottom left, rgba(0, 225, 255, 0.1), transparent 40%);
+      background-attachment: fixed;
+    }
+
+    button { border: 0; font: inherit; cursor: pointer; }
+
+    .app {
+      min-height: 100dvh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .top {
+      padding: 24px 20px;
+      text-align: center;
+      background: rgba(2, 6, 23, 0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    body[data-current-view="home"] .top {
+      display: none;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.5rem, 4vw, 2.5rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #fff, #a5b4fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 0.05em;
+    }
+
+    .cover-frame {
+      width: min(100%, 820px);
+      margin: 0 auto;
+      border-radius: 20px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 40px var(--accent-glow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .cover-frame:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.6), 0 0 60px var(--accent-glow);
+    }
+
+    .cover-frame img {
+      display: block;
+      width: 100%;
+      height: auto;
+    }
+
+    #home.view {
+      position: absolute;
+      inset: 0;
+      padding: 0;
+      margin: 0;
+      z-index: 0;
+    }
+
+    .home-cover {
+      display: block;
+      width: 100%;
+      height: 100%;
+      padding: 0;
+    }
+
+    .home-cover .cover-frame {
+      width: 100%;
+      height: 100%;
+      max-width: none;
+      border-radius: 0;
+      border: none;
+      box-shadow: none;
+      transition: none;
+    }
+    
+    .home-cover .cover-frame:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
+    .home-cover .cover-frame img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0.85;
+      mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+      -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 100%);
+    }
+
+    .screen {
+      position: relative;
+      padding: 40px clamp(16px, 4vw, 40px) 120px;
+      overflow: hidden;
+      min-height: calc(100dvh - 90px);
+    }
+
+    .view {
+      position: relative;
+      z-index: 1;
+      display: none;
+      animation: fadeIn 0.4s ease forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .view.active { display: block; }
+
+    .guide-layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: clamp(20px, 4vw, 50px);
+      align-items: center;
+    }
+
+    .side-list {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .action-row {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      backdrop-filter: blur(8px);
+      transition: background 0.2s, transform 0.2s;
+    }
+    
+    .action-row:hover {
+      background: var(--bg-surface-hover);
+      transform: translateX(4px);
+    }
+    
+    .right .action-row:hover {
+      transform: translateX(-4px);
+    }
+
+    .key-box {
+      display: grid;
+      place-items: center;
+      min-width: 60px;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--accent2);
+      border-radius: 8px;
+      font-weight: 800;
+      font-size: 1.1rem;
+      box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .label-box {
+      color: var(--text-main);
+      font-weight: 600;
+      font-size: 1.1rem;
+      line-height: 1.4;
+    }
+
+    .right .action-row {
+      flex-direction: row-reverse;
+      text-align: right;
+    }
+
+    .device-zone {
+      display: grid;
+      place-items: center;
+      position: relative;
+    }
+
+    .desk {
+      position: relative;
+      width: 440px;
+      height: 380px;
+    }
+
+    .keyboard {
+      position: absolute;
+      left: 0;
+      bottom: 40px;
+      width: 360px;
+      padding: 16px;
+      background: #0f172a;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 16px;
+      box-shadow: 0 16px 32px rgba(0,0,0,0.5), inset 0 2px 0 rgba(255,255,255,0.05);
+      transform: rotate(-3deg) perspective(800px) rotateX(10deg);
+    }
+
+    .kb-row {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+
+    .kb-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .key {
+      flex: 0 0 28px;
+      height: 30px;
+      display: grid;
+      place-items: center;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.75rem;
+      box-shadow: 0 4px 0 #0f172a, inset 0 1px 1px rgba(255,255,255,0.1);
+      transition: all 0.1s;
+    }
+
+    .key:active {
+      transform: translateY(4px);
+      box-shadow: 0 0 0 #0f172a;
+    }
+
+    .hot { 
+      color: var(--accent);
+      text-shadow: 0 0 8px var(--accent-glow);
+      border-color: rgba(255, 94, 0, 0.3);
+    }
+    
+    .key.tab { flex-basis: 42px; }
+    .key.caps { flex-basis: 52px; }
+    .key.shift { flex-basis: 68px; }
+    .key.ctrl { flex-basis: 42px; }
+    .key.space { flex-basis: 134px; }
+    .key.blank { color: transparent; }
+
+    .mouse {
+      position: absolute;
+      right: 0;
+      bottom: 70px;
+      width: 86px;
+      height: 140px;
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 40px;
+      box-shadow: 0 16px 32px rgba(0,0,0,0.5), inset 0 2px 0 rgba(255,255,255,0.05);
+      transform: rotate(12deg) perspective(800px) rotateX(10deg);
+    }
+
+    .mouse::before {
+      content: "";
+      position: absolute;
+      top: 10px;
+      left: calc(50% - 1px);
+      width: 2px;
+      height: 50px;
+      background: #334155;
+    }
+
+    .wheel {
+      position: absolute;
+      left: calc(50% - 6px);
+      top: 24px;
+      width: 12px;
+      height: 24px;
+      border-radius: 8px;
+      background: var(--accent2);
+      box-shadow: 0 0 10px var(--accent2-glow);
+    }
+
+    .click-note {
+      position: absolute;
+      right: -30px;
+      top: 10px;
+      padding: 8px 16px;
+      color: var(--accent2);
+      background: rgba(15, 23, 42, 0.8);
+      border: 1px solid rgba(0, 225, 255, 0.2);
+      border-radius: 8px;
+      backdrop-filter: blur(4px);
+      font-weight: 800;
+      font-size: 0.9rem;
+      transform: rotate(5deg);
+      box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    }
+
+    .panel-grid {
+      position: relative;
+      z-index: 1;
+      max-width: 1000px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+      gap: 24px;
+      align-content: center;
+      min-height: calc(100dvh - 250px);
+    }
+
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 12px 24px rgba(0,0,0,0.2);
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px rgba(255, 255, 255, 0.03);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .card h2 {
+      margin: 0;
+      padding: 18px 24px;
+      color: var(--accent);
+      background: rgba(0,0,0,0.2);
+      font-size: 1.25rem;
+      font-weight: 800;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-body {
+      padding: 24px;
+      line-height: 1.8;
+      font-size: 1.05rem;
+    }
+
+    .card ul {
+      margin: 0;
+      padding-left: 1.2rem;
+      list-style-type: none;
+    }
+    
+    .card ul li {
+      position: relative;
+      margin-bottom: 12px;
+    }
+    
+    .card ul li::before {
+      content: "•";
+      color: var(--accent2);
+      font-weight: bold;
+      position: absolute;
+      left: -1.2rem;
+    }
+
+    .mini-kbd {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 2em;
+      height: 1.8em;
+      margin: 0 0.2em;
+      padding: 0 0.5em;
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 6px;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 0.9em;
+      box-shadow: 0 2px 0 rgba(0,0,0,0.3);
+      vertical-align: text-bottom;
+    }
+
+    .legend {
+      position: fixed;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(15, 23, 42, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--border);
+      border-radius: 100px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+
+    .mode-tab {
+      padding: 12px 24px;
+      border-radius: 100px;
+      color: var(--text-muted);
+      background: transparent;
+      font-weight: 700;
+      font-size: 1rem;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .mode-tab:hover { 
+      color: var(--text-main);
+      background: rgba(255,255,255,0.05);
+    }
+
+    .mode-tab.active {
+      color: #fff;
+      background: var(--accent);
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    @media (max-width: 970px) {
+      .guide-layout {
+        grid-template-columns: 1fr;
+      }
+      .device-zone {
+        order: -1;
+        margin-bottom: 20px;
+      }
+      .desk {
+        width: 100%;
+        max-width: 440px;
+      }
+    }
+
+    @media (max-width: 580px) {
+      h1 { font-size: 1.5rem; }
+      .screen { padding: 20px 16px 100px; }
+      .legend {
+        width: calc(100% - 32px);
+        overflow-x: auto;
+        justify-content: flex-start;
+        padding: 8px;
+        bottom: 16px;
+      }
+      .legend::-webkit-scrollbar {
+        display: none;
+      }
+      .mode-tab {
+        padding: 10px 16px;
+        white-space: nowrap;
+        font-size: 0.9rem;
+      }
+      .card h2 {
+        padding: 14px 16px;
+        font-size: 1.1rem;
+      }
+      .card-body {
+        padding: 16px;
+        font-size: 0.95rem;
+      }
+      .desk { height: 300px; }
+      .keyboard {
+        width: 280px;
+        padding: 12px;
+        bottom: 20px;
+      }
+      .key {
+        flex-basis: 22px;
+        height: 24px;
+        font-size: 0.6rem;
+      }
+      .key.tab { flex-basis: 34px; }
+      .key.caps { flex-basis: 42px; }
+      .key.shift { flex-basis: 56px; }
+      .key.ctrl { flex-basis: 34px; }
+      .key.space { flex-basis: 110px; }
+      .mouse {
+        width: 66px;
+        height: 110px;
+        right: 10px;
+        bottom: 50px;
+      }
+      .wheel {
+        top: 18px;
+        height: 18px;
+      }
+      .click-note {
+        right: -10px;
+        top: 0;
+        font-size: 0.8rem;
+        padding: 6px 10px;
+      }
+      .action-row {
+        padding: 10px;
+      }
+      .key-box {
+        min-width: 50px;
+        padding: 6px 12px;
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body data-current-view="home">
+  <main class="app">
+    <header class="top">
+      <h1>ハイクラウド かくれんぼ2026大会</h1>
+    </header>
+
+    <section class="screen">
+      <section id="home" class="view active" aria-label="ホーム">
+        <div class="home-cover">
+          <div class="cover-frame">
+            <img src="Gemini_mecha-chameleon-cover.png" alt="ハイクラウド かくれんぼ2026大会 表紙">
+          </div>
+        </div>
+      </section>
+
+      <section id="common" class="view" aria-label="共通操作">
+        <div class="guide-layout">
+          <div class="side-list left">
+            <div class="action-row"><div class="key-box">W/S/A/D</div><div class="label-box">移動</div></div>
+            <div class="action-row"><div class="key-box">Shift</div><div class="label-box">走る</div></div>
+            <div class="action-row"><div class="key-box">Space</div><div class="label-box">ジャンプ<br>登る</div></div>
+            <div class="action-row"><div class="key-box">Esc</div><div class="label-box">オプション<br>退出</div></div>
+          </div>
+
+          <div class="device-zone" aria-label="キーボードとマウス">
+            <div class="desk">
+              <div class="keyboard" aria-hidden="true">
+                <div class="kb-row">
+                  <div class="key hot">Esc</div><div class="key hot">1</div><div class="key">2</div><div class="key">3</div><div class="key hot">4</div><div class="key hot">5</div><div class="key">6</div><div class="key">7</div><div class="key">8</div><div class="key">9</div>
+                </div>
+                <div class="kb-row">
+                  <div class="key tab">Tab</div><div class="key">Q</div><div class="key">W</div><div class="key">E</div><div class="key hot">R</div><div class="key">T</div><div class="key">Y</div><div class="key">U</div><div class="key">I</div>
+                </div>
+                <div class="kb-row">
+                  <div class="key caps">Caps</div><div class="key">A</div><div class="key">S</div><div class="key">D</div><div class="key hot">F</div><div class="key">G</div><div class="key">H</div><div class="key">J</div>
+                </div>
+                <div class="kb-row">
+                  <div class="key shift hot">Shift</div><div class="key">Z</div><div class="key">X</div><div class="key">C</div><div class="key hot">V</div><div class="key">B</div><div class="key">N</div>
+                </div>
+                <div class="kb-row">
+                  <div class="key ctrl">Ctrl</div><div class="key blank">Alt</div><div class="key space hot">Space</div><div class="key blank">Alt</div><div class="key ctrl">Ctrl</div>
+                </div>
+              </div>
+              <div class="mouse" aria-hidden="true">
+                <div class="wheel"></div>
+              </div>
+              <div class="click-note">右 / 左クリック</div>
+            </div>
+          </div>
+
+          <div class="side-list right">
+            <div class="action-row"><div class="label-box">視点変更</div><div class="key-box">Mouse</div></div>
+            <div class="action-row"><div class="label-box">左クリック</div><div class="key-box">L</div></div>
+            <div class="action-row"><div class="label-box">右クリック</div><div class="key-box">R</div></div>
+            <!-- <div class="action-row"><div class="label-box">ESC</div><div class="key-box">設定</div></div> -->
+          </div>
+        </div>
+      </section>
+
+      <section id="hider" class="view" aria-label="隠れる側">
+        <div class="panel-grid">
+          <article class="card">
+            <h2>隠れる側: 擬態アクション</h2>
+            <div class="card-body">
+              <ul>
+                <li>ペイントモード切り替え: <span class="mini-kbd">F</span></li>
+                <li>ポーズをとる: <span class="mini-kbd">R</span></li>
+                <li>挑発する: <span class="mini-kbd">1</span></li>
+                <li>影を残すかどうかの切り替え: <span class="mini-kbd">V</span></li>
+                <li>ジャンプ / 登る: <span class="mini-kbd">Space</span></li>
+              </ul>
+            </div>
+          </article>
+          <article class="card">
+            <h2>隠れる側: ペイント操作</h2>
+            <div class="card-body">
+              <ul>
+                <li>3Dスポイト: <span class="mini-kbd">Space</span> を押している間、カーソル先のオブジェクトそのものの色を拾います。</li>
+                <li>カラーパレットのスポイト: 画面左上のパレット内ボタンから、画面に見えている色や影を拾えます。</li>
+                <li>ブラシの太さ変更: ゲーム内のペイント操作で変更できます。</li>
+                <li>視点移動: <span class="mini-kbd">ホイールクリック</span> しながらマウス操作</li>
+                <li>視点距離: <span class="mini-kbd">ホイールスクロール</span></li>
+              </ul>
+            </div>
+          </article>
+          <article class="card">
+            <h2>隠れている時のカメラ</h2>
+            <div class="card-body">
+              <ul>
+                <li>フリーカメラへの移行: <span class="mini-kbd">5</span></li>
+                <li>鬼の視点 / 位置確認: フリーカメラ状態で右クリック・左クリック。</li>
+                <li>カメラの自由移動: フリーカメラ状態で <span class="mini-kbd">4</span></li>
+              </ul>
+            </div>
+          </article>
+          <article class="card">
+            <h2>スポイトの違い</h2>
+            <div class="card-body">
+              <ul>
+                <li>3Dスポイトは、カーソル先にある物体の色を直接拾います。</li>
+                <li>パレットのスポイトは、画面上に見えている色を拾うため、影や見た目の明暗も含めやすいです。</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="seeker" class="view" aria-label="鬼">
+        <div class="panel-grid">
+          <article class="card">
+            <h2>鬼（探す側）の操作</h2>
+            <div class="card-body">
+              <ul>
+                <li>走る: <span class="mini-kbd">Shift</span></li>
+                <li>しゃがむ: <span class="mini-kbd">Shift</span></li>
+                <li>ジャンプ / 登る: <span class="mini-kbd">Space</span></li>
+                <li>視点変更: マウス操作</li>
+              </ul>
+            </div>
+          </article>
+          <article class="card">
+            <h2>探す時のメモ</h2>
+            <div class="card-body">
+              <ul>
+                <li>輪郭が背景とズレている場所を確認します。</li>
+                <li>影の濃さ、模様のつながり、微妙な動きを見ます。</li>
+                <li>怪しい場所は角度を変えて観察します。</li>
+                <li>攻撃（撃つ）操作はゲーム内表示や設定で確認してください。</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="rules" class="view" aria-label="ルール・モード">
+        <div class="panel-grid">
+          <article class="card">
+            <h2>大会の基本ルール</h2>
+            <div class="card-body">
+              プレイヤーは「隠れる側（人間チーム）」と「探す側（鬼チーム）」に分かれて対戦します。<br><br>
+              <strong>隠れる側の勝利条件：</strong><br>
+              制限時間内に自分の体をペイントしてフィールドに隠れ、時間切れまで鬼の目を欺いて生き残ること。<br><br>
+              <strong>探す側（鬼）の勝利条件：</strong><br>
+              フィールド内を歩き回り、不自然に浮いている「プレイヤー」を見つけ出して攻撃し、全員を撃破すること。
+            </div>
+          </article>
+          <article class="card">
+            <h2>選べるゲームモード</h2>
+            <div class="card-body">
+              当日は状況に合わせて以下のモードで遊ぶ予定です。<br><br>
+              <ul>
+                <li><strong>通常モード：</strong>シンプルに「隠れる側」と「探す側」に分かれる基本モード。</li>
+                <li><strong>増え鬼モード：</strong>鬼に見つかった人間が、次々と鬼チームに加わっていくスリリングなモード。</li>
+                <li><strong>ダブルモード：</strong>最初に全員で隠れた後、全員が鬼となって探し合うモード（一番早く全員を見つけた人が勝ち）。</li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section id="schedule" class="view" aria-label="スケジュール案">
+        <div class="panel-grid" style="grid-template-columns: 1fr;">
+          <article class="card">
+            <h2>社内大会『めっちゃカメレオン』スケジュール案</h2>
+            <div class="card-body">
+              <ul>
+                <li style="margin-bottom: 24px;">
+                  <strong style="color: var(--accent2);">■ 14:00〜14:15｜集合＆ウォーミングアップ</strong><br>
+                  <strong>内容：</strong>パスワード付きのプライベートサーバーに全員集合。<br>
+                  操作確認や「スポイト」で色を拾う練習、チャットや挑発機能のお試しなど、フィールドを散歩しながらゲームに慣れる時間です。
+                </li>
+                <li style="margin-bottom: 24px;">
+                  <strong style="color: var(--accent2);">■ 14:15〜14:40｜第1戦〜第2戦：通常モード（鬼2 vs 隠れる側5）</strong><br>
+                  <strong>内容：</strong>シンプルに鬼チームと隠れる側に分かれる基本モードです。<br>
+                  <strong>おすすめ設定：</strong>最初は隠れるのが難しいため、鬼を2人に設定する。隠れる時間を長め（120秒〜140秒）にとると、絵を塗る時間が確保できて盛り上がります。
+                </li>
+                <li style="margin-bottom: 24px;">
+                  <strong style="color: var(--accent2);">■ 14:40〜15:00｜第3戦〜第4戦：増え鬼モード</strong><br>
+                  <strong>内容：</strong>見つかった人が次々と鬼チームに加わっていくモードです。
+                </li>
+                <li style="margin-bottom: 24px;">
+                  <strong style="color: var(--accent2);">■ 15:00〜15:20｜第5戦〜第6戦：ダブルモード（全員鬼の個人戦）</strong><br>
+                  <strong>内容：</strong>最初に全員で隠れた後、今度は「全員が鬼」となって探し合うモードです。一番早く全員を見つけた人が勝者となります。<br>
+                  <strong>見どころ：</strong>チーム戦ではなく完全な個人戦です。大会の締めくくりとして「社内最強のカメレオン＆ハンター」を決める。
+                </li>
+                <li>
+                  <strong style="color: var(--accent2);">■ 15:20〜15:30｜結果発表＆感想戦</strong><br>
+                  誰の擬態が一番見事だったか、誰の隠れ方が一番面白かった（不自然だった）かなどを振り返り、スクショを見せ合いながら表彰や感想戦を行います。
+                </li>
+              </ul>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <nav class="legend" aria-label="ページ切替">
+        <button class="mode-tab active" data-view="home">ホーム</button>
+        <button class="mode-tab" data-view="rules">ルール・モード</button>
+        <button class="mode-tab" data-view="schedule">スケジュール</button>
+        <button class="mode-tab" data-view="common">共通</button>
+        <button class="mode-tab" data-view="hider">隠れる側</button>
+        <button class="mode-tab" data-view="seeker">鬼</button>
+      </nav>
+    </section>
+  </main>
+
+  <script>
+    const tabs = document.querySelectorAll(".mode-tab");
+    const views = document.querySelectorAll(".view");
+
+    tabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        const target = tab.dataset.view;
+        document.body.dataset.currentView = target;
+        tabs.forEach((item) => item.classList.toggle("active", item === tab));
+        views.forEach((view) => view.classList.toggle("active", view.id === target));
+      });
+    });
+  </script>
+</body>
+</html>
