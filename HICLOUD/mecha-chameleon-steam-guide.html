@@ -7,11 +7,11 @@
   <meta property="og:title" content="ハイクラウド かくれんぼ2026大会">
   <meta property="og:description" content="社内大会『めっちゃカメレオン』の操作ガイドとルール・スケジュール。">
   <meta property="og:type" content="website">
-  <meta property="og:image" content="Gemini_mecha-chameleon-cover.png">
+  <meta property="og:image" content="https://あなたのサイトのURL.com/Gemini_mecha-chameleon-cover.png">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="ハイクラウド かくれんぼ2026大会">
   <meta name="twitter:description" content="社内大会『めっちゃカメレオン』の操作ガイドとルール・スケジュール。">
-  <meta name="twitter:image" content="Gemini_mecha-chameleon-cover.png">
+  <meta name="twitter:image" content="https://あなたのサイトのURL.com/Gemini_mecha-chameleon-cover.png">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Noto+Sans+JP:wght@400;600;800;900&display=swap');
 
@@ -459,6 +459,14 @@
       box-shadow: 0 4px 12px var(--accent-glow);
     }
 
+    .scroll-hint {
+      display: none;
+    }
+    @keyframes bounceX {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(-6px); }
+    }
+
     @media (max-width: 970px) {
       .guide-layout {
         grid-template-columns: 1fr;
@@ -474,6 +482,23 @@
     }
 
     @media (max-width: 580px) {
+      .scroll-hint {
+        display: block;
+        position: fixed;
+        bottom: 74px;
+        right: 16px;
+        color: var(--text-main);
+        background: rgba(0, 225, 255, 0.8);
+        padding: 6px 14px;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 800;
+        z-index: 100;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        animation: bounceX 1.5s infinite;
+        pointer-events: none;
+        backdrop-filter: blur(8px);
+      }
       h1 { font-size: 1.5rem; }
       .screen { padding: 20px 16px 100px; }
       .legend {
@@ -552,7 +577,10 @@
       <section id="home" class="view active" aria-label="ホーム">
         <div class="home-cover">
           <div class="cover-frame">
-            <img src="Gemini_mecha-chameleon-cover.png" alt="ハイクラウド かくれんぼ2026大会 表紙">
+            <picture>
+              <source media="(max-width: 580px)" srcset="Gemini_mecha-chameleon-sp.png">
+              <img src="Gemini_mecha-chameleon-cover.png" alt="ハイクラウド かくれんぼ2026大会 表紙">
+            </picture>
           </div>
         </div>
       </section>
@@ -737,6 +765,7 @@
         </div>
       </section>
 
+      <div class="scroll-hint">➔ スワイプ</div>
       <nav class="legend" aria-label="ページ切替">
         <button class="mode-tab active" data-view="home">ホーム</button>
         <button class="mode-tab" data-view="rules">ルール・モード</button>
