@@ -1,0 +1,370 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>面接エージェント</title>
+  <style>
+    :root {
+      --ink: #1d2530;
+      --muted: #647181;
+      --line: #d8dee7;
+      --panel: #ffffff;
+      --soft: #f5f7fa;
+      --accent: #176b87;
+      --accent-2: #9b4d39;
+      --shadow: 0 12px 34px rgba(27, 39, 51, .10);
+    }
+    * { box-sizing: border-box; }
+    [hidden] { display: none !important; }
+    body {
+      margin: 0;
+      color: var(--ink);
+      background: linear-gradient(180deg, #f9fafb 0%, #eef3f6 100%);
+      font-family: "Yu Gothic UI", "Meiryo", system-ui, sans-serif;
+      line-height: 1.55;
+      letter-spacing: 0;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(255,255,255,.94);
+      position: sticky;
+      top: 0;
+      z-index: 3;
+    }
+    h1 { margin: 0; font-size: 22px; font-weight: 760; }
+    .sub { color: var(--muted); font-size: 13px; white-space: nowrap; }
+    main {
+      display: grid;
+      grid-template-columns: 420px minmax(0, 1fr);
+      min-height: calc(100vh - 66px);
+    }
+    aside {
+      padding: 20px;
+      border-right: 1px solid var(--line);
+      background: rgba(255,255,255,.62);
+    }
+    section { padding: 20px; }
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      padding: 4px;
+      border: 1px solid var(--line);
+      background: var(--soft);
+      border-radius: 8px;
+      margin-bottom: 18px;
+    }
+    .tab {
+      border: 0;
+      border-radius: 6px;
+      padding: 10px 8px;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-weight: 700;
+      min-height: 42px;
+    }
+    .tab.active {
+      background: #fff;
+      color: var(--accent);
+      box-shadow: 0 1px 6px rgba(0,0,0,.08);
+    }
+    .grid { display: grid; gap: 12px; }
+    label { display: grid; gap: 6px; font-size: 13px; font-weight: 700; }
+    textarea, input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 11px;
+      font: inherit;
+      background: #fff;
+      color: var(--ink);
+    }
+    textarea { min-height: 104px; resize: vertical; }
+    .wide-textarea { min-height: 180px; }
+    .fixed-box {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 10px 11px;
+      background: #fff;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .criteria {
+      max-height: 170px;
+      overflow: auto;
+      white-space: pre-wrap;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+    button {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--ink);
+      padding: 10px 12px;
+      font: inherit;
+      font-weight: 760;
+      cursor: pointer;
+      min-height: 42px;
+    }
+    .primary { border-color: var(--accent); background: var(--accent); color: #fff; }
+    .secondary { border-color: #d7c2b8; color: var(--accent-2); }
+    .output-wrap { display: grid; gap: 14px; max-width: 1040px; margin: 0 auto; }
+    .toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .status { color: var(--muted); font-size: 13px; }
+    .output {
+      white-space: pre-wrap;
+      min-height: 620px;
+      padding: 22px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      overflow-wrap: anywhere;
+    }
+    .pill-line { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 2px; }
+    .pill {
+      padding: 5px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--muted);
+      font-size: 12px;
+      font-weight: 700;
+    }
+    @media (max-width: 900px) {
+      header { align-items: flex-start; flex-direction: column; }
+      .sub { white-space: normal; }
+      main { grid-template-columns: 1fr; }
+      aside { border-right: 0; border-bottom: 1px solid var(--line); }
+      .output { min-height: 420px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>面接エージェント</h1>
+    <div class="sub">システムエンジニア採用の面接前準備と面接後評価をMarkdownで生成</div>
+  </header>
+
+  <main>
+    <aside>
+      <div class="tabs" role="tablist" aria-label="モード">
+        <button class="tab active" data-mode="pre" type="button">面接前</button>
+        <button class="tab" data-mode="post" type="button">面接後</button>
+      </div>
+
+      <form id="form" class="grid">
+        <label>候補者名または仮名
+          <input id="candidate" placeholder="例: 山田さん">
+        </label>
+
+        <label>応募職種
+          <div class="fixed-box">システムエンジニア</div>
+        </label>
+
+        <label>選考基準（評価の軸）
+          <div class="fixed-box criteria">1. **愛される性格（4つの定義）**
+   * 【素直さと吸収力】：指摘を否定せず受け入れ、自分をアップデートできるか。
+   * 【誠実な自己開示（可愛げ）】：失敗や弱みを隠さず、等身大で話せるか。
+   * 【他者への想像力】：自分のことだけでなく、周囲の状況や感情に目が向くか。
+   * 【人付き合いの良さ】：プライベートな時間を、関係性構築に割くことを惜しまないか。
+2. **責任感と自律性**
+   * 「自由と責任」のメリハリを理解し、ここぞという時に「責任ある行動」が取れるか。</div>
+        </label>
+
+        <label id="profileLabel">履歴書の経歴概要
+          <textarea id="profile" class="wide-textarea" placeholder="履歴書の経歴概要を貼り付け"></textarea>
+        </label>
+
+        <label id="notesLabel">自己PR
+          <textarea id="notes" placeholder="自己PRを貼り付け"></textarea>
+        </label>
+
+        <div class="pill-line">
+          <span class="pill">SE固定</span>
+          <span class="pill">Markdown</span>
+          <span class="pill">素直さ</span>
+          <span class="pill">責任感</span>
+        </div>
+
+        <div class="actions">
+          <button class="primary" type="button" id="generate">生成</button>
+          <button type="button" id="clear">クリア</button>
+        </div>
+      </form>
+    </aside>
+
+    <section>
+      <div class="output-wrap">
+        <div class="toolbar">
+          <div class="status" id="status">面接前モードです。履歴書の経歴概要と自己PRからMarkdownプロンプトを生成します。</div>
+          <div class="actions">
+            <button class="secondary" type="button" id="copy">コピー</button>
+            <button type="button" id="download">保存</button>
+          </div>
+        </div>
+        <div id="output" class="output" aria-live="polite"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const fixedRole = "システムエンジニア";
+    const fixedCriteria = "1. **愛される性格（4つの定義）**\n   * 【素直さと吸収力】：指摘を否定せず受け入れ、自分をアップデートできるか。\n   * 【誠実な自己開示（可愛げ）】：失敗や弱みを隠さず、等身大で話せるか。\n   * 【他者への想像力】：自分のことだけでなく、周囲の状況や感情に目が向くか。\n   * 【人付き合いの良さ】：プライベートな時間を、関係性構築に割くことを惜しまないか。\n2. **責任感と自律性**\n   * 「自由と責任」のメリハリを理解し、ここぞという時に「責任ある行動」が取れるか。";
+    const fields = {
+      candidate: document.getElementById("candidate"),
+      profile: document.getElementById("profile"),
+      notes: document.getElementById("notes")
+    };
+    const output = document.getElementById("output");
+    const status = document.getElementById("status");
+    const tabs = [...document.querySelectorAll(".tab")];
+    let mode = "pre";
+
+    function value(id) {
+      return fields[id].value.trim() || "未入力";
+    }
+
+    function setMode(next) {
+      mode = next;
+      tabs.forEach(tab => tab.classList.toggle("active", tab.dataset.mode === mode));
+      document.getElementById("profileLabel").firstChild.textContent =
+        mode === "post" ? "面接での回答メモ・印象に残った発言" : "履歴書の経歴概要";
+      document.getElementById("notesLabel").firstChild.textContent =
+        mode === "post" ? "良かった点・懸念点・態度の観察" : "自己PR";
+      fields.profile.placeholder =
+        mode === "post" ? "面接での回答メモ、印象に残った発言を貼り付け" : "履歴書の経歴概要を貼り付け";
+      fields.notes.placeholder =
+        mode === "post" ? "良かった点、懸念点、態度・話し方の観察を貼り付け" : "自己PRを貼り付け";
+      status.textContent =
+        mode === "post" ? "面接後モードです。上司向け評価レポートをMarkdownで生成します。" :
+        "面接前モードです。履歴書の経歴概要と自己PRからMarkdownプロンプトを生成します。";
+      output.textContent = "";
+    }
+
+    function preTemplate() {
+      return `# 面接前・履歴書観点整理依頼
+
+## 固定条件
+- 応募職種: ${fixedRole}
+- 出力形式: Markdown
+
+## 候補者
+- 氏名または仮名: ${value("candidate")}
+
+## 履歴書の経歴概要
+${value("profile")}
+
+## 自己PR
+${value("notes")}
+
+## 選考基準（評価の軸）
+${fixedCriteria}
+
+## AIへの依頼
+あなたは「愛される性格（ポテンシャル）」を見抜く面接官スペシャリストであり、面接準備をサポートするAIアシスタントです。
+上記の候補者の「履歴書の経歴概要」と「自己PR」をもとに、システムエンジニア採用の面接前に把握すべきポイント、懸念点、深掘り質問を洗い出してください。
+
+## 出力ルール
+- 必ずMarkdown形式で出力してください。
+- 事実と推測を分けてください。
+- 根拠が薄い部分は「追加確認が必要」と書いてください。
+- 職務に関係しない属性では評価しないでください。
+
+## 出力フォーマット
+
+### 履歴書の全体印象・ファーストインプレッション
+選考基準（愛される性格・自律性）の観点から見て、書類から伝わるポジティブな印象を整理してください。
+
+### 面接で確認すべき懸念点・ギャップ
+- 中退や仕切り直しの経緯で「他責（環境のせい）」にしそうなポイントがないか。
+- 自己PRが「スキル・独りよがり」になっておらず、「周囲との調和・素直さ」があるかどうか。
+- システムエンジニアとして、学習姿勢・協働姿勢・責任感に追加確認が必要な点。
+
+### 経歴・自己PRから深掘りするための追加質問案
+- 経歴に関する深掘り（挫折・仕切り直し・誠実な自己開示を見る質問）
+- 自己PRに関する深掘り（周囲を巻き込んだ経験・助けを求めた経験を見る質問）
+- システムエンジニア適性に関する深掘り（学習継続、報連相、チーム開発、責任感を見る質問）
+
+### この候補者を面接するときの面接官の構え・注意点
+候補者の良さを引き出しつつ、懸念点を自然に確認するための面接官向けアドバイスを書いてください。`;
+    }
+
+    function postTemplate() {
+      return `# 面接評価レポート作成依頼
+
+## 固定条件
+- 応募職種: ${fixedRole}
+- 出力形式: Markdown
+
+## 候補者
+- 氏名または仮名: ${value("candidate")}
+
+## 面接での回答メモ・印象に残った発言
+${value("profile")}
+
+## 良かった点・懸念点・態度の観察
+${value("notes")}
+
+## 選考基準（評価の軸）
+${fixedCriteria}
+
+## AIへの依頼
+上記の面接メモをもとに、システムエンジニア採用における上司向け面接評価レポートをMarkdown形式で作成してください。
+
+## 出力フォーマット
+
+### 総合判定
+- 判定: 採用推薦 / 条件付き検討 / 不採用推奨
+- 評価: A / B / C / D
+- 一言サマリー:
+
+### 選考基準ごとの詳細評価
+- 愛される性格:
+- 責任感と自律性:
+- システムエンジニアとしての学習姿勢・協働姿勢:
+- 態度・コミュニケーション:
+
+### 上司への推薦・不採用理由
+そのまま報告に使える文章で、採用理由または懸念理由を書いてください。`;
+    }
+
+    function generate() {
+      output.textContent = mode === "post" ? postTemplate() : preTemplate();
+      status.textContent = "生成しました。コピーしてAIに渡すか、Markdownファイルとして保存できます。";
+    }
+
+    tabs.forEach(tab => tab.addEventListener("click", () => setMode(tab.dataset.mode)));
+    document.getElementById("generate").addEventListener("click", generate);
+    document.getElementById("clear").addEventListener("click", () => {
+      document.getElementById("form").reset();
+      output.textContent = "";
+      status.textContent = "入力をクリアしました。";
+    });
+    document.getElementById("copy").addEventListener("click", async () => {
+      if (!output.textContent.trim()) generate();
+      await navigator.clipboard.writeText(output.textContent);
+      status.textContent = "コピーしました。";
+    });
+    document.getElementById("download").addEventListener("click", () => {
+      if (!output.textContent.trim()) generate();
+      const blob = new Blob([output.textContent], { type: "text/markdown;charset=utf-8" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = mode === "post" ? "面接後評価プロンプト.md" : "面接前評価プロンプト.md";
+      a.click();
+      URL.revokeObjectURL(a.href);
+      status.textContent = "Markdownファイルとして保存しました。";
+    });
+
+    setMode("pre");
+  </script>
+</body>
+</html>
