@@ -1032,14 +1032,70 @@
     const tabs = document.querySelectorAll(".mode-tab");
     const views = document.querySelectorAll(".view");
 
+    // タブの表示順を定義
+    const viewOrder = Array.from(tabs).map(tab => tab.dataset.view);
+
+    // 画面遷移処理
+    function switchView(target) {
+      document.body.dataset.currentView = target;
+      tabs.forEach((item) => item.classList.toggle("active", item.dataset.view === target));
+      views.forEach((view) => view.classList.toggle("active", view.id === target));
+
+      // スマホ画面で横スクロールするナビゲーションバーを自動スクロールさせる
+      const activeTab = document.querySelector(`.mode-tab[data-view="${target}"]`);
+      if (activeTab) {
+        activeTab.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+      }
+    }
+
     tabs.forEach((tab) => {
       tab.addEventListener("click", () => {
-        const target = tab.dataset.view;
-        document.body.dataset.currentView = target;
-        tabs.forEach((item) => item.classList.toggle("active", item === tab));
-        views.forEach((view) => view.classList.toggle("active", view.id === target));
+        switchView(tab.dataset.view);
       });
     });
+
+    // スマホ画面用スワイプ処理（ブレイクポイント 580px 以下）
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchEndX = 0;
+    let touchEndY = 0;
+
+    window.addEventListener("touchstart", (e) => {
+      // 580px以下のスマホ画面サイズのみ反応させる
+      if (!window.matchMedia("(max-width: 580px)").matches) return;
+      touchStartX = e.changedTouches[0].screenX;
+      touchStartY = e.changedTouches[0].screenY;
+    }, { passive: true });
+
+    window.addEventListener("touchend", (e) => {
+      if (!window.matchMedia("(max-width: 580px)").matches) return;
+      touchEndX = e.changedTouches[0].screenX;
+      touchEndY = e.changedTouches[0].screenY;
+      handleSwipe();
+    }, { passive: true });
+
+    function handleSwipe() {
+      const diffX = touchEndX - touchStartX;
+      const diffY = touchEndY - touchStartY;
+
+      // 左右のスワイプ判定（横方向の移動が50px以上かつ、縦方向の移動より横方向の移動が大きい場合）
+      if (Math.abs(diffX) > 50 && Math.abs(diffX) > Math.abs(diffY)) {
+        const currentView = document.body.dataset.currentView || "home";
+        const currentIndex = viewOrder.indexOf(currentView);
+
+        if (diffX < 0) {
+          // 右から左へのスワイプ（次の画面へ）
+          if (currentIndex < viewOrder.length - 1) {
+            switchView(viewOrder[currentIndex + 1]);
+          }
+        } else {
+          // 左から右へのスワイプ（前の画面へ）
+          if (currentIndex > 0) {
+            switchView(viewOrder[currentIndex - 1]);
+          }
+        }
+      }
+    }
   </script>
 </body>
 
