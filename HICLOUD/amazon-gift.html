@@ -1,0 +1,746 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HICLOUD かくれんぼ2026大会 優勝賞品 - Amazonギフト券</title>
+  <meta name="theme-color" content="#ff9900">
+  <meta name="description" content="ハイクラウド かくれんぼ2026大会の優勝賞品であるデジタルAmazonギフト券の受取・登録案内ページ。">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+JP:wght@400;700;900&display=swap');
+
+    :root {
+      --bg-base: #0b0f17;
+      --bg-surface: rgba(22, 28, 45, 0.6);
+      --bg-surface-hover: rgba(30, 41, 59, 0.8);
+      --border: rgba(255, 255, 255, 0.08);
+      --amazon-gold: #ff9900;
+      --amazon-gold-glow: rgba(255, 153, 0, 0.4);
+      --gold-foil: linear-gradient(135deg, #ffe066 0%, #f5b041 50%, #d35400 100%);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      color: var(--text-main);
+      background-color: var(--bg-base);
+      background-image:
+        radial-gradient(circle at 50% 20%, rgba(255, 153, 0, 0.12), transparent 50%),
+        radial-gradient(circle at 0% 100%, rgba(0, 225, 255, 0.05), transparent 40%);
+      background-attachment: fixed;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      overflow-x: hidden;
+    }
+
+    .container {
+      width: min(100%, 800px);
+      padding: 40px 20px 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .subtitle {
+      font-weight: 800;
+      color: var(--amazon-gold);
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+      text-shadow: 0 0 10px var(--amazon-gold-glow);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 5vw, 2.8rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #fff 30%, #ffd700 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: -0.02em;
+    }
+
+    /* --- 3D Digital Gift Card --- */
+    .card-perspective {
+      perspective: 1000px;
+      margin: 20px 0 40px;
+      width: 100%;
+      max-width: 440px;
+      aspect-ratio: 1.586 / 1;
+      /* Standard credit card ratio */
+    }
+
+    .gift-card {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+      cursor: pointer;
+    }
+
+    .gift-card-inner {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, #1f2633 0%, #0f131a 100%);
+      border: 1px solid rgba(255, 153, 0, 0.25);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.5),
+        0 0 30px rgba(255, 153, 0, 0.1),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+      overflow: hidden;
+    }
+
+    /* Gloss overlay for metallic feel */
+    .gift-card-inner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(115deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0) 50%, rgba(0, 0, 0, 0.5) 100%);
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Diagonal gold line pattern */
+    .card-pattern {
+      position: absolute;
+      inset: 0;
+      opacity: 0.05;
+      background-image: repeating-linear-gradient(45deg, var(--amazon-gold) 0, var(--amazon-gold) 1px, transparent 0, transparent 50%);
+      background-size: 15px 15px;
+      pointer-events: none;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Custom SVG representation of Amazon logo */
+    .amazon-logo {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .amazon-text {
+      color: #ffffff;
+      font-size: 1.4rem;
+      font-weight: 900;
+      letter-spacing: -0.05em;
+      line-height: 1;
+    }
+
+    .amazon-smile {
+      width: 70px;
+      height: 12px;
+      fill: var(--amazon-gold);
+      margin-top: 2px;
+      filter: drop-shadow(0 0 4px var(--amazon-gold-glow));
+    }
+
+    .hicloud-badge {
+      font-size: 0.75rem;
+      font-weight: 800;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 4px 10px;
+      border-radius: 8px;
+      letter-spacing: 0.1em;
+      color: #e2e8f0;
+    }
+
+    .card-body {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 10px 0;
+    }
+
+    .prize-title-card {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .prize-value {
+      font-size: clamp(2.2rem, 6vw, 3.2rem);
+      font-weight: 900;
+      background: var(--gold-foil);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 4px 12px rgba(245, 176, 65, 0.3));
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+
+    .card-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: relative;
+      z-index: 2;
+    }
+
+    .winner-label {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .label-desc {
+      font-size: 0.65rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+    }
+
+    .winner-name {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .card-serial {
+      font-size: 0.65rem;
+      font-family: monospace;
+      color: rgba(255, 255, 255, 0.3);
+      letter-spacing: 0.05em;
+    }
+
+    /* --- Interactive Action Zone --- */
+    .action-zone {
+      width: 100%;
+      max-width: 440px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-bottom: 40px;
+    }
+
+    .reveal-btn {
+      width: 100%;
+      padding: 16px 32px;
+      background: linear-gradient(135deg, #ff9900 0%, #ff5e00 100%);
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 800;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(255, 94, 0, 0.3), 0 0 0 1px rgba(255, 153, 0, 0.2);
+      transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .reveal-btn:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 15px 30px rgba(255, 94, 0, 0.45);
+    }
+
+    .reveal-btn:active {
+      transform: translateY(-1px);
+    }
+
+    .reveal-btn .btn-icon {
+      font-size: 1.3rem;
+    }
+
+    /* Code Reveal Container */
+    .code-container {
+      width: 100%;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(255, 153, 0, 0.3);
+      border-radius: 16px;
+      padding: 20px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+      animation: zoomIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    }
+
+    @keyframes zoomIn {
+      from {
+        opacity: 0;
+        transform: scale(0.9) translateY(10px);
+      }
+
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .code-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--amazon-gold);
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+
+    .code-display-wrapper {
+      width: 100%;
+      display: flex;
+      gap: 8px;
+    }
+
+    .code-display {
+      flex: 1;
+      background: #020617;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+      padding: 14px;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: clamp(1.1rem, 4vw, 1.5rem);
+      font-weight: 800;
+      color: #fff;
+      text-align: center;
+      letter-spacing: 0.1em;
+    }
+
+    .copy-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      color: #fff;
+      padding: 0 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .copy-btn:hover {
+      background: var(--amazon-gold);
+      border-color: var(--amazon-gold);
+      color: #000;
+      box-shadow: 0 0 15px var(--amazon-gold-glow);
+    }
+
+    .copy-success-msg {
+      font-size: 0.85rem;
+      color: #2ecc71;
+      margin-top: 10px;
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    /* --- How to redeem section --- */
+    .card-info {
+      width: 100%;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      margin-bottom: 40px;
+    }
+
+    .card-info h2 {
+      margin: 0;
+      padding: 18px 24px;
+      color: var(--amazon-gold);
+      background: rgba(0, 0, 0, 0.2);
+      font-size: 1.15rem;
+      font-weight: 800;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-info-body {
+      padding: 24px;
+    }
+
+    .step-list {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .step-item {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .step-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .step-num {
+      flex: 0 0 32px;
+      height: 32px;
+      background: rgba(255, 153, 0, 0.15);
+      border: 1px solid var(--amazon-gold);
+      color: var(--amazon-gold);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 800;
+      font-size: 0.95rem;
+    }
+
+    .step-content {
+      flex: 1;
+      line-height: 1.7;
+      font-size: 0.95rem;
+    }
+
+    .step-content strong {
+      color: #fff;
+    }
+
+    .note-box {
+      margin-top: 24px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.03);
+      border-left: 3px solid var(--text-muted);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+    }
+
+    /* --- Footer Action Buttons --- */
+    .footer-actions {
+      display: flex;
+      gap: 16px;
+      width: 100%;
+      justify-content: center;
+    }
+
+    .back-btn {
+      padding: 12px 24px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      border-radius: 100px;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 0.9rem;
+      transition: all 0.2s;
+    }
+
+    .back-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    /* Confetti Canvas */
+    #confetti-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 999;
+      width: 100%;
+      height: 100%;
+    }
+  </style>
+</head>
+
+<body>
+
+  <canvas id="confetti-canvas"></canvas>
+
+  <div class="container">
+    <header>
+      <div class="subtitle" id="subtitle-element">ハイクラウド かくれんぼ2026大会</div>
+      <h1 id="title-element">優勝賞品 Amazonギフト券</h1>
+    </header>
+
+    <!-- 3D Gift Card Container -->
+    <div class="card-perspective" id="card-perspective">
+      <div class="gift-card" id="gift-card">
+        <div class="gift-card-inner">
+          <div class="card-pattern"></div>
+
+          <div class="card-header">
+            <div class="amazon-logo" aria-label="Amazon">
+              <span class="amazon-text">amazon</span>
+              <!-- Custom Amazon Smile SVG -->
+              <svg class="amazon-smile" viewBox="0 0 100 20">
+                <path d="M5,2 Q45,18 85,2 Q87,0 85,-1 Q45,14 5,-1 Q3,0 5,2 Z" />
+                <polygon points="85,0 88,8 80,4" />
+              </svg>
+            </div>
+            <span class="hicloud-badge">HICLOUD 大会</span>
+          </div>
+
+          <div class="card-body">
+            <span class="prize-title-card">WINNER SPECIAL PRIZE</span>
+            <span class="prize-value">¥2,000</span>
+          </div>
+
+          <div class="card-footer">
+            <div class="winner-label">
+              <span class="label-desc">Presented to</span>
+              <span class="winner-name" id="winner-name-text">最強のカメレオン＆ハンター</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Action Zone: Reveal code and copy -->
+    <div class="action-zone">
+      <button class="reveal-btn" id="reveal-btn">
+        <span class="btn-icon">🎁</span>
+        <span>ギフトコードを表示する</span>
+      </button>
+
+      <div class="code-container" id="code-container">
+        <div class="code-title">▼ あなたのAmazonギフトコード</div>
+        <div class="code-display-wrapper">
+          <div class="code-display" id="code-display">AQDT-9KS82B-3TGC8</div>
+          <button class="copy-btn" id="copy-btn">コピー</button>
+        </div>
+        <div class="copy-success-msg" id="copy-success-msg">コードをクリップボードにコピーしました！</div>
+      </div>
+    </div>
+
+    <!-- How to Redeem Section -->
+    <section class="card-info" aria-label="登録手順">
+      <h2>Amazonギフトカードのご利用方法</h2>
+      <div class="card-info-body">
+        <ol class="step-list">
+          <li class="step-item">
+            <div class="step-num">1</div>
+            <div class="step-content">
+              <strong>ギフトカード登録ページにアクセス</strong><br>
+              ブラウザまたはAmazonショッピングアプリから、Amazon.co.jpのアカウントにログイン後、[アカウントサービス] ➔ [Amazonギフトカードを登録する] ページを開きます。
+            </div>
+          </li>
+          <li class="step-item">
+            <div class="step-num">2</div>
+            <div class="step-content">
+              <strong>コードの入力</strong><br>
+              上記のコピーしたギフトコード（<strong>HICL-CHAM-2026-WINN</strong>）を入力欄に貼り付けます。
+            </div>
+          </li>
+          <li class="step-item">
+            <div class="step-num">3</div>
+            <div class="step-content">
+              <strong>アカウントに登録</strong><br>
+              <strong>[アカウントに登録する]</strong> ボタンをクリックすると、即時にお客様のAmazonアカウントの残高へ ¥2,000 分が追加されます。
+            </div>
+          </li>
+        </ol>
+        <div class="note-box">
+          ※本ギフト券の有効期限は発行日から10年間です。<br>
+          ※Amazon.co.jpのアカウントをお持ちでない場合は、事前に無料のアカウント登録が必要です。<br>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Links -->
+    <div class="footer-actions">
+      <a href="mecha-chameleon-steam-guide.html" class="back-btn">← 大会ガイドに戻る</a>
+    </div>
+  </div>
+
+  <script>
+    // --- 3D Hover Tilt Effect ---
+    const cardPerspective = document.getElementById('card-perspective');
+    const giftCard = document.getElementById('gift-card');
+
+    cardPerspective.addEventListener('mousemove', (e) => {
+      const rect = cardPerspective.getBoundingClientRect();
+      const x = e.clientX - rect.left; // x position within element
+      const y = e.clientY - rect.top;  // y position within element
+
+      const centerX = rect.width / 2;
+      const centerY = rect.height / 2;
+
+      // Calculate rotation angles (-15 to 15 degrees)
+      const rotateX = ((centerY - y) / centerY) * 15;
+      const rotateY = ((x - centerX) / centerX) * 15;
+
+      giftCard.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
+    });
+
+    cardPerspective.addEventListener('mouseleave', () => {
+      giftCard.style.transform = 'rotateX(0deg) rotateY(0deg) scale(1)';
+    });
+
+    // --- Interactive Reveal & Confetti ---
+    const revealBtn = document.getElementById('reveal-btn');
+    const codeContainer = document.getElementById('code-container');
+    const copyBtn = document.getElementById('copy-btn');
+    const codeDisplay = document.getElementById('code-display');
+    const copySuccessMsg = document.getElementById('copy-success-msg');
+
+    revealBtn.addEventListener('click', () => {
+      // Reveal the code
+      revealBtn.style.display = 'none';
+      codeContainer.style.display = 'flex';
+
+      // Fire Confetti
+      startConfetti();
+    });
+
+    // --- Clipboard Copy ---
+    copyBtn.addEventListener('click', () => {
+      const textToCopy = codeDisplay.innerText;
+      navigator.clipboard.writeText(textToCopy).then(() => {
+        // Show success indicator
+        copySuccessMsg.style.opacity = '1';
+        copyBtn.innerText = '完了！';
+        copyBtn.style.background = '#2e7d32';
+        copyBtn.style.borderColor = '#2e7d32';
+
+        // Revert back after 2 seconds
+        setTimeout(() => {
+          copySuccessMsg.style.opacity = '0';
+          copyBtn.innerText = 'コピー';
+          copyBtn.style.background = '';
+          copyBtn.style.borderColor = '';
+        }, 2000);
+      }).catch(err => {
+        console.error('コピーに失敗しました: ', err);
+      });
+    });
+
+    // --- Lightweight Canvas Confetti Engine ---
+    const canvas = document.getElementById('confetti-canvas');
+    const ctx = canvas.getContext('2d');
+    let animationId = null;
+    let confettiActive = false;
+    const particles = [];
+    const colors = ['#ff9900', '#ffd700', '#ff5e00', '#ffffff', '#232f3e', '#ff3366', '#00e1ff'];
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+
+    class ConfettiParticle {
+      constructor() {
+        this.x = Math.random() * canvas.width;
+        this.y = -20 - Math.random() * 100;
+        this.size = Math.random() * 8 + 6;
+        this.color = colors[Math.floor(Math.random() * colors.length)];
+        this.speedX = Math.random() * 4 - 2;
+        this.speedY = Math.random() * 6 + 4;
+        this.rotation = Math.random() * 360;
+        this.rotationSpeed = Math.random() * 4 - 2;
+        this.opacity = 1;
+      }
+
+      update() {
+        this.x += this.speedX;
+        this.y += this.speedY;
+        this.rotation += this.rotationSpeed;
+
+        // Slow fade when reaching near bottom
+        if (this.y > canvas.height * 0.8) {
+          this.opacity -= 0.02;
+        }
+      }
+
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate((this.rotation * Math.PI) / 180);
+        ctx.globalAlpha = this.opacity;
+        ctx.fillStyle = this.color;
+        // Draw standard rectangular confetti
+        ctx.fillRect(-this.size / 2, -this.size / 4, this.size, this.size / 2);
+        ctx.restore();
+      }
+    }
+
+    function startConfetti() {
+      if (confettiActive) return;
+      confettiActive = true;
+
+      // Initialize particles
+      for (let i = 0; i < 120; i++) {
+        particles.push(new ConfettiParticle());
+      }
+
+      animateConfetti();
+
+      // Stop spawning after 4 seconds to prevent performance drainage
+      setTimeout(() => {
+        confettiActive = false;
+      }, 4000);
+    }
+
+    function animateConfetti() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Spawn new particles if active
+      if (confettiActive && particles.length < 150 && Math.random() < 0.4) {
+        particles.push(new ConfettiParticle());
+      }
+
+      // Update and draw existing particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.update();
+        p.draw();
+
+        // Remove dead particles
+        if (p.y > canvas.height || p.opacity <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+
+      if (particles.length > 0 || confettiActive) {
+        animationId = requestAnimationFrame(animateConfetti);
+      } else {
+        cancelAnimationFrame(animationId);
+        animationId = null;
+      }
+    }
+  </script>
+</body>
+
+</html>
