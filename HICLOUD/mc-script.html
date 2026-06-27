@@ -1,0 +1,1449 @@
+<!doctype html>
+<html lang="ja">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>HICLOUD かくれんぼ2026大会 司会進行ダッシュボード</title>
+  <meta name="theme-color" content="#ff5e00">
+  <meta name="description" content="ハイクラウド かくれんぼ2026大会（めっちゃカメレオン）の司会進行用インタラクティブ台本ツール。">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&family=Noto+Sans+JP:wght@400;700;900&family=Share+Tech+Mono&display=swap');
+
+    :root {
+      --bg-base: #020617;
+      --bg-surface: rgba(15, 23, 42, 0.6);
+      --bg-surface-hover: rgba(30, 41, 59, 0.8);
+      --border: rgba(255, 255, 255, 0.08);
+      --accent: #ff5e00;
+      --accent-glow: rgba(255, 94, 0, 0.4);
+      --accent2: #00e1ff;
+      --accent2-glow: rgba(0, 225, 255, 0.4);
+      --success: #10b981;
+      --success-glow: rgba(16, 185, 129, 0.3);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-mono: 'Share Tech Mono', 'Courier New', Courier, monospace;
+
+      font-family: 'Inter', 'Noto Sans JP', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100dvh;
+      color: var(--text-main);
+      background-color: var(--bg-base);
+      background-image:
+        radial-gradient(circle at top right, rgba(255, 94, 0, 0.08), transparent 45%),
+        radial-gradient(circle at bottom left, rgba(0, 225, 255, 0.08), transparent 45%);
+      background-attachment: fixed;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    /* --- Header --- */
+    header {
+      background: rgba(2, 6, 23, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 24px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .header-logo .badge {
+      background: linear-gradient(135deg, var(--accent), #ff9900);
+      color: #000;
+      font-weight: 900;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.1rem, 2.5vw, 1.6rem);
+      font-weight: 900;
+      background: linear-gradient(135deg, #fff, #a5b4fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      letter-spacing: 0.02em;
+    }
+
+    .header-time-info {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
+    .live-clock {
+      font-family: var(--font-mono);
+      font-size: 1.2rem;
+      color: var(--accent2);
+      text-shadow: 0 0 8px var(--accent2-glow);
+      background: rgba(0, 225, 255, 0.05);
+      border: 1px solid rgba(0, 225, 255, 0.15);
+      padding: 4px 12px;
+      border-radius: 8px;
+    }
+
+    /* --- Dashboard Layout --- */
+    .dashboard-container {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      min-height: calc(100dvh - 75px);
+      max-width: 1600px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    @media (max-width: 1024px) {
+      .dashboard-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* --- Sidebar (Navigation & Checklists) --- */
+    .sidebar {
+      background: rgba(15, 23, 42, 0.35);
+      border-right: 1px solid var(--border);
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+      overflow-y: auto;
+      max-height: calc(100dvh - 75px);
+      position: sticky;
+      top: 75px;
+    }
+
+    @media (max-width: 1024px) {
+      .sidebar {
+        position: relative;
+        top: 0;
+        max-height: none;
+        border-right: none;
+        border-bottom: 1px solid var(--border);
+      }
+    }
+
+    .section-title {
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      font-weight: 800;
+      border-left: 3px solid var(--accent);
+      padding-left: 8px;
+    }
+
+    .nav-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .timeline-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+      text-align: left;
+      width: 100%;
+    }
+
+    .timeline-item:hover {
+      background: var(--bg-surface-hover);
+      border-color: rgba(255, 255, 255, 0.15);
+      transform: translateX(4px);
+    }
+
+    .timeline-item.active {
+      background: rgba(255, 94, 0, 0.08);
+      border-color: var(--accent);
+      box-shadow: 0 0 12px rgba(255, 94, 0, 0.15);
+    }
+
+    .timeline-time {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      color: var(--accent2);
+      font-weight: 600;
+      background: rgba(0, 225, 255, 0.08);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    .timeline-label {
+      font-weight: 700;
+      font-size: 0.9rem;
+      flex: 1;
+    }
+
+    .timeline-check-indicator {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.6rem;
+      color: transparent;
+      transition: all 0.2s;
+    }
+
+    .timeline-item.completed .timeline-check-indicator {
+      background: var(--success);
+      border-color: var(--success);
+      color: #fff;
+    }
+
+    /* Progress Tracker Widget */
+    .progress-widget {
+      background: rgba(30, 41, 59, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+    }
+
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .progress-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .progress-percent {
+      font-family: var(--font-mono);
+      color: var(--success);
+      font-weight: 700;
+    }
+
+    .progress-bar-bg {
+      height: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent2), var(--success));
+      border-radius: 4px;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 10px var(--accent2-glow);
+    }
+
+    /* Links card */
+    .links-card {
+      background: rgba(30, 41, 59, 0.2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: auto;
+    }
+
+    .link-button {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 0.85rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .link-button:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+
+    /* --- Main Workspace (Scripts & Tools) --- */
+    .main-workspace {
+      padding: 32px;
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 24px;
+      overflow-y: auto;
+      max-height: calc(100dvh - 75px);
+    }
+
+    @media (max-width: 1024px) {
+      .main-workspace {
+        max-height: none;
+        padding: 20px;
+      }
+    }
+
+    /* Timer Widget in main space */
+    .timer-dashboard {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.7) 0%, rgba(15, 23, 42, 0.8) 100%);
+      border: 1px solid var(--border);
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+      border-radius: 20px;
+      padding: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .timer-dashboard::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: var(--accent);
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    @media (max-width: 768px) {
+      .timer-dashboard {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+      .timer-dashboard::before {
+        width: 100%;
+        height: 4px;
+        top: 0;
+        left: 0;
+      }
+    }
+
+    .timer-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .timer-label {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      font-weight: 700;
+    }
+
+    .timer-display {
+      font-family: var(--font-mono);
+      font-size: clamp(2.5rem, 6vw, 3.8rem);
+      font-weight: 900;
+      color: var(--text-main);
+      line-height: 1;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+      transition: color 0.3s;
+    }
+
+    .timer-display.danger {
+      color: #ff3e3e;
+      text-shadow: 0 0 25px rgba(255, 62, 62, 0.5);
+      animation: pulse 1s infinite alternate;
+    }
+
+    @keyframes pulse {
+      from { transform: scale(1); }
+      to { transform: scale(1.03); }
+    }
+
+    .timer-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      flex: 1;
+      max-width: 450px;
+    }
+
+    .timer-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn {
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      border: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 4px 14px var(--accent-glow);
+    }
+
+    .btn-primary:hover {
+      background: #ff7722;
+      transform: translateY(-1px);
+    }
+
+    .btn-outline {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--border);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .btn-danger {
+      background: rgba(239, 68, 68, 0.15);
+      border-color: rgba(239, 68, 68, 0.3);
+      color: #ef4444;
+    }
+
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.25);
+    }
+
+    .timer-presets {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-preset {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      cursor: pointer;
+      font-family: var(--font-mono);
+      transition: all 0.2s;
+    }
+
+    .btn-preset:hover {
+      background: rgba(0, 225, 255, 0.08);
+      border-color: var(--accent2);
+      color: var(--accent2);
+    }
+
+    /* --- Script Panel & Content Cards --- */
+    .content-panel {
+      display: none;
+      animation: fadeUp 0.35s ease forwards;
+    }
+
+    .content-panel.active {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--border);
+      padding-bottom: 12px;
+      margin-bottom: 8px;
+    }
+
+    .section-header h2 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .section-meta {
+      font-family: var(--font-mono);
+      color: var(--accent2);
+      font-weight: 600;
+    }
+
+    /* MC Checklist */
+    .task-checklist-container {
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .task-checklist-title {
+      font-weight: 800;
+      font-size: 1rem;
+      margin-bottom: 16px;
+      color: var(--accent2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .checklist-items {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 12px;
+    }
+
+    .check-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.02);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .check-label:hover {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .check-label input[type="checkbox"] {
+      margin-top: 3px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .check-label.checked {
+      background: rgba(16, 185, 129, 0.05);
+      border-color: var(--success);
+    }
+
+    .check-label.checked .check-text {
+      color: var(--text-muted);
+      text-decoration: line-through;
+    }
+
+    .check-text {
+      font-size: 0.9rem;
+      font-weight: 600;
+      line-height: 1.4;
+    }
+
+    /* Script Block Card */
+    .card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+      transition: transform 0.2s, box-shadow 0.2s;
+      position: relative;
+    }
+
+    .card:hover {
+      border-color: rgba(255, 255, 255, 0.12);
+    }
+
+    .card-title {
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--accent);
+      margin-top: 0;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .script-text-box {
+      background: rgba(2, 6, 23, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.04);
+      border-radius: 12px;
+      padding: 20px;
+      font-size: 1.1rem;
+      line-height: 1.8;
+      color: var(--text-main);
+      white-space: pre-wrap;
+    }
+
+    .script-line {
+      margin-bottom: 12px;
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .script-line:hover {
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .script-line.read-highlight {
+      background: rgba(0, 225, 255, 0.1);
+      border-left: 3px solid var(--accent2);
+    }
+
+    .mc-note {
+      font-size: 0.85rem;
+      color: var(--accent2);
+      font-weight: 700;
+      background: rgba(0, 225, 255, 0.05);
+      border: 1px solid rgba(0, 225, 255, 0.1);
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Announcement Text Copy Box */
+    .copy-box-card {
+      background: linear-gradient(135deg, rgba(30, 41, 59, 0.3) 0%, rgba(15, 23, 42, 0.4) 100%);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .copy-box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .copy-box-title {
+      font-weight: 800;
+      font-size: 0.9rem;
+      color: var(--accent2);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .copy-box-content {
+      position: relative;
+    }
+
+    .copy-textarea {
+      width: 100%;
+      background: #020617;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px;
+      color: #94a3b8;
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 1.6;
+      resize: vertical;
+      min-height: 80px;
+      transition: border-color 0.2s, color 0.2s;
+    }
+
+    .copy-textarea:focus {
+      outline: none;
+      border-color: var(--accent2);
+      color: var(--text-main);
+    }
+
+    .btn-copy {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      background: rgba(0, 225, 255, 0.1);
+      border: 1px solid rgba(0, 225, 255, 0.2);
+      color: var(--accent2);
+      font-size: 0.75rem;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-copy:hover {
+      background: var(--accent2);
+      color: #000;
+      box-shadow: 0 0 10px var(--accent2-glow);
+    }
+
+    /* Sound Effect/Atmosphere Notes */
+    .pro-tips-card {
+      background: rgba(255, 94, 0, 0.03);
+      border: 1px solid rgba(255, 94, 0, 0.1);
+      border-radius: 16px;
+      padding: 20px;
+    }
+
+    .tips-title {
+      font-weight: 800;
+      font-size: 0.95rem;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tips-list {
+      margin: 0;
+      padding-left: 20px;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      color: var(--text-muted);
+    }
+
+    .tips-list li {
+      margin-bottom: 8px;
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toast {
+      background: rgba(16, 185, 129, 0.9);
+      color: #fff;
+      padding: 12px 24px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), 0 0 10px var(--success-glow);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transform: translateY(50px);
+      opacity: 0;
+      animation: toastIn 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    }
+
+    @keyframes toastIn {
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .toast.fade-out {
+      animation: toastOut 0.3s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+    }
+
+    @keyframes toastOut {
+      from {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(-20px);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- --- Header --- -->
+  <header>
+    <div class="header-logo">
+      <span class="badge" aria-hidden="true">MC TOOL</span>
+      <h1>HICLOUD かくれんぼ2026 進行管理ダッシュボード</h1>
+    </div>
+    <div class="header-time-info">
+      <div id="liveClock" class="live-clock" title="現在の時刻">18:00:00</div>
+    </div>
+  </header>
+
+  <!-- --- Dashboard Layout --- -->
+  <main class="dashboard-container">
+
+    <!-- --- Sidebar --- -->
+    <aside class="sidebar">
+      <div>
+        <div class="section-title">全体の進行度</div>
+        <div class="progress-widget">
+          <div class="progress-header">
+            <span class="progress-title">タスク完了率</span>
+            <span id="progressPercent" class="progress-percent">0%</span>
+          </div>
+          <div class="progress-bar-bg" aria-hidden="true">
+            <div id="progressBarFill" class="progress-bar-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <nav aria-label="進行フェーズ一覧">
+        <div class="section-title">タイムライン</div>
+        <div class="nav-timeline">
+          <button class="timeline-item active" data-phase="lobby" id="btn-phase-lobby">
+            <span class="timeline-time">18:00</span>
+            <span class="timeline-label">集合 & ガイダンス</span>
+            <span class="timeline-check-indicator" id="indicator-lobby">✓</span>
+          </button>
+          <button class="timeline-item" data-phase="normal" id="btn-phase-normal">
+            <span class="timeline-time">18:15</span>
+            <span class="timeline-label">通常モード (第1, 2戦)</span>
+            <span class="timeline-check-indicator" id="indicator-normal">✓</span>
+          </button>
+          <button class="timeline-item" data-phase="infection" id="btn-phase-infection">
+            <span class="timeline-time">18:40</span>
+            <span class="timeline-label">増え鬼モード (第3, 4戦)</span>
+            <span class="timeline-check-indicator" id="indicator-infection">✓</span>
+          </button>
+          <button class="timeline-item" data-phase="double" id="btn-phase-double">
+            <span class="timeline-time">19:00</span>
+            <span class="timeline-label">ダブルモード (第5, 6戦)</span>
+            <span class="timeline-check-indicator" id="indicator-double">✓</span>
+          </button>
+          <button class="timeline-item" data-phase="results" id="btn-phase-results">
+            <span class="timeline-time">19:20</span>
+            <span class="timeline-label">結果発表 & 表彰式</span>
+            <span class="timeline-check-indicator" id="indicator-results">✓</span>
+          </button>
+        </div>
+      </nav>
+
+      <div class="links-card">
+        <div class="section-title" style="border-left-color: var(--accent2); margin-bottom: 0;">クイックリンク</div>
+        <a href="mecha-chameleon-steam-guide.html" target="_blank" class="link-button" id="link-steam-guide">
+          <span>🎮 プレイヤー用操作ガイド</span>
+          <span>↗</span>
+        </a>
+        <a href="amazon-gift.html" target="_blank" class="link-button" id="link-gift-page">
+          <span>🎁 Amazonギフト受取ページ</span>
+          <span>↗</span>
+        </a>
+      </div>
+    </aside>
+
+    <!-- --- Main Workspace --- -->
+    <section class="main-workspace" aria-label="進行コントロールエリア">
+
+      <!-- --- Timer Dashboard --- -->
+      <div class="timer-dashboard">
+        <div class="timer-info">
+          <div class="timer-label" id="timerModeLabel">タイマー（停止中）</div>
+          <div id="timerDisplay" class="timer-display">02:00</div>
+        </div>
+        <div class="timer-controls">
+          <div class="timer-actions">
+            <button id="btnStartPause" class="btn btn-primary" style="flex: 2;">▶ スタート</button>
+            <button id="btnReset" class="btn btn-outline" style="flex: 1;">↺ リセット</button>
+          </div>
+          <div class="timer-presets">
+            <button class="btn-preset" data-seconds="120">2分 (ペイント)</button>
+            <button class="btn-preset" data-seconds="180">3分 (鬼捜索)</button>
+            <button class="btn-preset" data-seconds="60">1分 (終了前)</button>
+            <button class="btn-preset" data-seconds="10">10秒 (テスト)</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- --- PHASE: LOBBY --- -->
+      <div id="phase-lobby" class="content-panel active">
+        <div class="section-header">
+          <h2>集合 & ガイダンス・練習</h2>
+          <span class="section-meta">18:00 - 18:15 (15分)</span>
+        </div>
+
+        <div class="task-checklist-container">
+          <div class="task-checklist-title">📋 準備フェーズ チェックリスト</div>
+          <div class="checklist-items">
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="lobby"> <span class="check-text">全員のDiscord接続・VC確認</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="lobby"> <span class="check-text">部屋名・パスワードをアナウンス</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="lobby"> <span class="check-text">操作練習（スポイト・ペイント）を促す</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="lobby"> <span class="check-text">18:15になったらルール説明へ進む</span></label>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🎙️ オープニング アナウンス</div>
+          <div class="mc-note">※全員がVCに集まったら、元気よく挨拶してイベントを開始します。</div>
+          <div class="script-text-box">
+<div class="script-line">「皆様お疲れ様です！本日は社内大会『ハイクラウド かくれんぼ2026』にお集まりいただき、誠にありがとうございます！」</div>
+<div class="script-line">「本日司会・進行を務めさせていただきます、［司会者の名前］です。どうぞよろしくお願いいたします！」</div>
+<div class="script-line">「本日はSteamの『めっちゃカメレオン（Mecha Chameleon）』というゲームを使って、社内最強のカメレオン、そして最強のハンターを決定したいと思います。」</div>
+<div class="script-line">「まずは18時15分までウォーミングアップの時間といたします。プライベートサーバーに接続し、マップの散策や操作の確認を行ってください！」</div>
+          </div>
+        </div>
+
+        <div class="copy-box-card">
+          <div class="copy-box-header">
+            <span class="copy-box-title">💬 Discord/ゲーム内チャット送信文</span>
+          </div>
+          <div class="copy-box-content">
+            <textarea class="copy-textarea" readonly>【ハイクラウド かくれんぼ2026】
+プライベートサーバーをオープンしました！
+以下の情報を入力し、ゲーム内ロビーへご入室ください。
+
+■ 部屋名： HICLOUD-HIDE-2026
+■ パスワード： hicloud
+
+※入室後は自由にマップを移動したり、色を拾う練習（Space長押し）をして操作を確認しておいてください！</textarea>
+            <button class="btn-copy" id="btn-copy-lobby">📋 コピー</button>
+          </div>
+        </div>
+
+        <div class="pro-tips-card">
+          <div class="tips-title">💡 司会の実況ポイント & Tips</div>
+          <ul class="tips-list">
+            <li><strong>操作練習のアナウンス:</strong> 「画面左上のパレットからスポイトツールを使って色を吸い取る方法と、隠れている最中に[Space]キーを押し続けて目の前の壁や床そのものの色を直接吸い取る『3Dスポイト』の2種類があります！ぜひ今のうちに試してください！」</li>
+            <li><strong>参加確認:</strong> ロビーの人数がプレイヤー数（推奨7人以上、鬼2人＆隠れる側5人）揃っているかを画面でチェックしましょう。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- --- PHASE: NORMAL --- -->
+      <div id="phase-normal" class="content-panel">
+        <div class="section-header">
+          <h2>通常モード (第1戦・第2戦)</h2>
+          <span class="section-meta">18:15 - 18:40 (25分)</span>
+        </div>
+
+        <div class="task-checklist-container">
+          <div class="task-checklist-title">📋 通常モード チェックリスト</div>
+          <div class="checklist-items">
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="normal"> <span class="check-text">ゲームモードを「通常モード」に設定</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="normal"> <span class="check-text">鬼を2人、隠れる側を5人（目安）に割り当て</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="normal"> <span class="check-text">ペイント時間「120秒」、探索時間「180秒」を確認</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="normal"> <span class="check-text">第1戦開始のアナウンス ＆ タイマースタート</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="normal"> <span class="check-text">第2戦（鬼を交代）の実施</span></label>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🎙️ 通常モード ルール説明＆開始アナウンス</div>
+          <div class="mc-note">※基本ルールの確認と、ペイント開始の合図を出します。</div>
+          <div class="script-text-box">
+<div class="script-line">「それでは第1戦・第2戦『通常モード』を開始します！ルールを簡単にご説明します。」</div>
+<div class="script-line">「隠れる側（カメレオン）の勝利条件は、制限時間内に全身をペイントし、フィールドに擬態して『3分間』生き残ることです。」</div>
+<div class="script-line">「探す側（鬼）の勝利条件は、怪しい場所を攻撃し、制限時間内にカメレオン全員を見つけ出して撃破することです。」</div>
+<div class="script-line">「それでは第1戦のペイント時間を開始します！隠れる側の皆さん、背景に完璧に溶け込んでください！スタートです！」</div>
+          </div>
+        </div>
+
+        <div class="copy-box-card">
+          <div class="copy-box-header">
+            <span class="copy-box-title">💬 Discord/ゲーム内チャット送信文</span>
+          </div>
+          <div class="copy-box-content">
+            <textarea class="copy-textarea" readonly>【第1戦：通常モード】
+■ ルール： 鬼2名 vs 隠れる側5名
+■ 制限時間： ペイント 2分 / 探索 3分
+
+隠れる側は背景と完全に一致するようペイントしてください。
+鬼チームは、不自然なズレや影を見破って全員を撃破しましょう！</textarea>
+            <button class="btn-copy" id="btn-copy-normal">📋 コピー</button>
+          </div>
+        </div>
+
+        <div class="pro-tips-card">
+          <div class="tips-title">💡 司会の実況ポイント & Tips</div>
+          <ul class="tips-list">
+            <li><strong>ペイント中（2分）の実況:</strong> 「隠れる側の皆さん、一生懸命体を塗っています！3Dスポイトで床の色と同じにするのがコツですよ！Rキーでポーズを固めるのも忘れずに！」</li>
+            <li><strong>探索中（3分）の実況:</strong> 「鬼チームが解き放たれました！さあ、この部屋の隅にある不自然なグラデーションは…？あ！鬼が近くを通りましたがスルーしました！ヒヤヒヤしますね！」</li>
+            <li><strong>第2戦移行時のアナウンス:</strong> 鬼と隠れる側を交代させ、同じルールで第2戦を行います。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- --- PHASE: INFECTION --- -->
+      <div id="phase-infection" class="content-panel">
+        <div class="section-header">
+          <h2>増え鬼モード (第3戦・第4戦)</h2>
+          <span class="section-meta">18:40 - 19:00 (20分)</span>
+        </div>
+
+        <div class="task-checklist-container">
+          <div class="task-checklist-title">📋 増え鬼モード チェックリスト</div>
+          <div class="checklist-items">
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="infection"> <span class="check-text">ゲームモードを「増え鬼モード」に設定</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="infection"> <span class="check-text">初期の鬼を設定（1〜2名）</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="infection"> <span class="check-text">ペイント時間「120秒」、探索時間「180秒」</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="infection"> <span class="check-text">捕まった人が順次鬼チームになっていることを確認</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="infection"> <span class="check-text">第3戦・第4戦の実施</span></label>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🎙️ 増え鬼モード 説明＆開始アナウンス</div>
+          <div class="mc-note">※見つかると鬼が増えていく恐怖を煽ります。</div>
+          <div class="script-text-box">
+<div class="script-line">「続いて第3戦・第4戦は『増え鬼モード』に突入します！」</div>
+<div class="script-line">「こちらは、鬼に見つかって撃破されたプレイヤーが、次々と『鬼チーム』に加わっていくルールです。」</div>
+<div class="script-line">「最初は鬼が少数ですが、後半になればなるほど鬼の人数が増え、逃げ場がなくなっていきます！」</div>
+<div class="script-line">「人間チームの皆さん、最後まで生き残り、完璧なカメレオンとしての威厳を示せるでしょうか？ペイントスタートです！」</div>
+          </div>
+        </div>
+
+        <div class="copy-box-card">
+          <div class="copy-box-header">
+            <span class="copy-box-title">💬 Discord/ゲーム内チャット送信文</span>
+          </div>
+          <div class="copy-box-content">
+            <textarea class="copy-textarea" readonly>【第3戦：増え鬼モード】
+■ ルール： 初期鬼 1〜2名（見つかった人間は次々鬼に感染）
+■ 制限時間： ペイント 2分 / 探索 3分
+
+捕まったら即鬼側へ加入！後半は圧倒的な鬼の物量との戦いになります。
+最後まで隠れ通すことができるか挑戦です！</textarea>
+            <button class="btn-copy" id="btn-copy-infection">📋 コピー</button>
+          </div>
+        </div>
+
+        <div class="pro-tips-card">
+          <div class="tips-title">💡 司会の実況ポイント & Tips</div>
+          <ul class="tips-list">
+            <li><strong>感染発生時の実況:</strong> 「あーっと！○○さんが見つかってしまいました！これで○○さんも鬼チームに感染します！鬼は合計○人になりました！生存者は急いで静かに逃げてください！」</li>
+            <li><strong>終盤の実況:</strong> 「残り時間はあと1分！鬼がフィールド中を埋め尽くしています！この状況で生き残っているのは誰だ…！？あそこに怪しい影が…！」</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- --- PHASE: DOUBLE --- -->
+      <div id="phase-double" class="content-panel">
+        <div class="section-header">
+          <h2>ダブルモード（全員鬼の個人戦）</h2>
+          <span class="section-meta">19:00 - 19:20 (20分)</span>
+        </div>
+
+        <div class="task-checklist-container">
+          <div class="task-checklist-title">📋 ダブルモード チェックリスト</div>
+          <div class="checklist-items">
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="double"> <span class="check-text">ゲームモードを「ダブルモード」に設定</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="double"> <span class="check-text">全員が個人戦であることを確認</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="double"> <span class="check-text">ペイント時間「120秒」、探索時間「180秒」</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="double"> <span class="check-text">お互いを探し合う大乱闘の実況</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="double"> <span class="check-text">最高スコアの個人勝者を確認して控える</span></label>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🎙️ ダブルモード 説明＆開始アナウンス</div>
+          <div class="mc-note">※最後の個人戦。最強のハンター＆カメレオンを決める一番の盛り上がりどころです。</div>
+          <div class="script-text-box">
+<div class="script-line">「いよいよ最終の第5戦・第6戦『ダブルモード』を開始します！」</div>
+<div class="script-line">「こちらは完全な個人戦です。最初の2分間は『全員で一斉に隠れ』ます。」</div>
+<div class="script-line">「その後、なんと『全員が鬼』となってお互いを探し合います！一番早く、最も多くのプレイヤーを見つけた人が勝者となります。」</div>
+<div class="script-line">「まさに『最強のカメレオン』であり『最強のハンター』を決める最終バトルロイヤル！それではペイント開始です！」</div>
+          </div>
+        </div>
+
+        <div class="copy-box-card">
+          <div class="copy-box-header">
+            <span class="copy-box-title">💬 Discord/ゲーム内チャット送信文</span>
+          </div>
+          <div class="copy-box-content">
+            <textarea class="copy-textarea" readonly>【第5戦：ダブルモード】
+■ ルール： 全員隠れる ➔ 全員鬼となって探し合う個人戦
+■ 制限時間： ペイント 2分 / 探索 3分
+
+お互いに騙し合い、暴き合う最終バトルロイヤル！
+社内最強のカメレオン＆ハンターの座は誰の手に！？</textarea>
+            <button class="btn-copy" id="btn-copy-double">📋 ココピー</button>
+          </div>
+        </div>
+
+        <div class="pro-tips-card">
+          <div class="tips-title">💡 司会の実況ポイント & Tips</div>
+          <ul class="tips-list">
+            <li><strong>全員鬼フェーズ（探索）の実況:</strong> 「探索が始まりました！目の前の壁に化けていた人が突然動き出して攻撃しました！大乱闘です！」「あちこちで銃声とペイントの破裂音が響き渡っています！」「誰が最も多く見つけ出しているでしょうか！」</li>
+            <li><strong>結果の記録:</strong> ゲーム終了時に表示されるリザルト画面の順位表を確認し、トップのスコアを出したプレイヤーをメモしましょう。</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- --- PHASE: RESULTS --- -->
+      <div id="phase-results" class="content-panel">
+        <div class="section-header">
+          <h2>結果発表 & 表彰式</h2>
+          <span class="section-meta">19:20 - 19:30 (10分)</span>
+        </div>
+
+        <div class="task-checklist-container">
+          <div class="task-checklist-title">📋 表彰式 チェックリスト</div>
+          <div class="checklist-items">
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="results"> <span class="check-text">各試合の勝者・順位の集計を完了</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="results"> <span class="check-text">優勝者の発表・表彰セリフの読み上げ</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="results"> <span class="check-text">Amazonギフト登録ページの案内リンクを送信</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="results"> <span class="check-text">全員で記念撮影（スクリーンショット）の実施</span></label>
+            <label class="check-label"><input type="checkbox" class="task-check" data-phase="results"> <span class="check-text">イベント終了の挨拶</span></label>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-title">🎙️ 結果発表＆閉会 アナウンス</div>
+          <div class="mc-note">※優勝者を称え、景品を案内してイベントを美しく締めくくります。</div>
+          <div class="script-text-box">
+<div class="script-line">「全6戦、本当にお疲れ様でした！これにてすべてのゲームが終了しました。」</div>
+<div class="script-line">「それでは、本日の栄えある『ハイクラウド かくれんぼ2026大会』の総合優勝者を発表します！」</div>
+<div class="script-line">「本日、最も優れた擬態とハンティングスキルを見せた総合優勝者は…… ［プレイヤーの名前］さんです！おめでとうございます！」</div>
+<div class="script-line">「見事優勝された［プレイヤーの名前］さんには、豪華景品として『Amazonギフト券』を贈呈いたします！チャットの受取ページから登録してください！」</div>
+<div class="script-line">「最後に、イベントの記念として全員で集合写真を撮影したいと思います。フィールドの中央に集まってください！」</div>
+<div class="script-line">「撮影完了しました！皆様、本日はご参加いただき、本当にありがとうございました！また次回の大会でお会いしましょう！」</div>
+          </div>
+        </div>
+
+        <div class="copy-box-card">
+          <div class="copy-box-header">
+            <span class="copy-box-title">💬 Discord/ゲーム内チャット送信文</span>
+          </div>
+          <div class="copy-box-content">
+            <textarea class="copy-textarea" readonly>【かくれんぼ2026大会 結果発表】
+見事、本日の「最強カメレオン＆ハンター」の座に輝いた優勝者は【 ［優勝者名］ 】さんです！おめでとうございます！
+
+■ 優勝賞品受取ページ：
+https://gamelist-4he.pages.dev/HICLOUD/amazon-gift
+
+優勝者の方は、上記の受取案内ページにアクセスしてデジタルギフトコードの受取・ご登録をお願いいたします。
+
+皆様、本日はご参加・ご協力いただき本当にありがとうございました！</textarea>
+            <button class="btn-copy" id="btn-copy-results">📋 コピー</button>
+          </div>
+        </div>
+
+        <div class="pro-tips-card">
+          <div class="tips-title">💡 司会の実況ポイント & Tips</div>
+          <ul class="tips-list">
+            <li><strong>写真撮影の誘導:</strong> 「全員ペイントモードを解除するか、あえて自分の一番のお気に入りペイントをした状態でロビーの中央に並んでください！ポーズキー（Rキー）で好きなポーズをとって固まりましょう！」</li>
+            <li><strong>スクショの共有:</strong> 撮影したスクリーンショットは、後ほど社内Discordやグループチャットに投稿して共有するとイベント後の余韻が楽しめます。</li>
+          </ul>
+        </div>
+      </div>
+
+    </section>
+  </main>
+
+  <!-- --- Toast Area --- -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- --- Script Logic --- -->
+  <script>
+    // --- Live Clock ---
+    function updateLiveClock() {
+      const clockEl = document.getElementById("liveClock");
+      if (clockEl) {
+        const now = new Date();
+        const hours = String(now.getHours()).padStart(2, '0');
+        const minutes = String(now.getMinutes()).padStart(2, '0');
+        const seconds = String(now.getSeconds()).padStart(2, '0');
+        clockEl.textContent = `${hours}:${minutes}:${seconds}`;
+      }
+    }
+    setInterval(updateLiveClock, 1000);
+    updateLiveClock();
+
+    // --- Navigation / Phase Switcher ---
+    const timelineItems = document.querySelectorAll(".timeline-item");
+    const contentPanels = document.querySelectorAll(".content-panel");
+
+    function switchPhase(targetPhase) {
+      timelineItems.forEach((item) => {
+        item.classList.toggle("active", item.dataset.phase === targetPhase);
+      });
+      contentPanels.forEach((panel) => {
+        panel.classList.toggle("active", panel.id === `phase-${targetPhase}`);
+      });
+    }
+
+    timelineItems.forEach((item) => {
+      item.addEventListener("click", () => {
+        switchPhase(item.dataset.phase);
+      });
+    });
+
+    // --- Progress Tracker & Timeline Checkmarks ---
+    const allCheckboxes = document.querySelectorAll(".task-check");
+    const progressPercentEl = document.getElementById("progressPercent");
+    const progressBarFillEl = document.getElementById("progressBarFill");
+
+    function updateProgress() {
+      const total = allCheckboxes.length;
+      if (total === 0) return;
+
+      const checkedCount = document.querySelectorAll(".task-check:checked").length;
+      const percentage = Math.round((checkedCount / total) * 100);
+
+      progressPercentEl.textContent = `${percentage}%`;
+      progressBarFillEl.style.width = `${percentage}%`;
+
+      // Update sidebar timeline checks status
+      const phases = ['lobby', 'normal', 'infection', 'double', 'results'];
+      phases.forEach(phase => {
+        const phaseChecks = document.querySelectorAll(`.task-check[data-phase="${phase}"]`);
+        const phaseChecksTotal = phaseChecks.length;
+        const phaseChecksChecked = document.querySelectorAll(`.task-check[data-phase="${phase}"]:checked`).length;
+
+        const timelineButton = document.querySelector(`.timeline-item[data-phase="${phase}"]`);
+        if (timelineButton) {
+          if (phaseChecksTotal > 0 && phaseChecksChecked === phaseChecksTotal) {
+            timelineButton.classList.add("completed");
+          } else {
+            timelineButton.classList.remove("completed");
+          }
+        }
+      });
+    }
+
+    allCheckboxes.forEach((checkbox) => {
+      checkbox.addEventListener("change", (e) => {
+        const label = e.target.closest(".check-label");
+        if (label) {
+          label.classList.toggle("checked", e.target.checked);
+        }
+        updateProgress();
+      });
+    });
+
+    // Initial run
+    updateProgress();
+
+    // --- MC Script Line Highlighting ---
+    const scriptLines = document.querySelectorAll(".script-line");
+    scriptLines.forEach((line) => {
+      line.addEventListener("click", () => {
+        line.classList.toggle("read-highlight");
+      });
+    });
+
+    // --- Clipboard Copying with Custom Toast ---
+    const copyButtons = document.querySelectorAll(".btn-copy");
+    const toastContainer = document.getElementById("toastContainer");
+
+    function showToast(message) {
+      const toast = document.createElement("div");
+      toast.className = "toast";
+      toast.innerHTML = `<span>✓</span> <span>${message}</span>`;
+      toastContainer.appendChild(toast);
+
+      // Auto fade out
+      setTimeout(() => {
+        toast.classList.add("fade-out");
+        toast.addEventListener("animationend", () => {
+          toast.remove();
+        });
+      }, 2500);
+    }
+
+    copyButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const textarea = btn.previousElementSibling;
+        if (textarea && (textarea.tagName === "TEXTAREA" || textarea.tagName === "INPUT")) {
+          textarea.select();
+          textarea.setSelectionRange(0, 99999); // For mobile devices
+          navigator.clipboard.writeText(textarea.value)
+            .then(() => {
+              showToast("クリップボードにコピーしました！");
+            })
+            .catch(() => {
+              // Fallback
+              try {
+                document.execCommand("copy");
+                showToast("クリップボードにコピーしました！");
+              } catch (err) {
+                showToast("コピーに失敗しました。手動でコピーしてください。");
+              }
+            });
+        }
+      });
+    });
+
+    // --- Timer Module with Web Audio API Beeps ---
+    let timerInterval = null;
+    let timerSeconds = 120; // Default preset (2 mins)
+    let timerRunning = false;
+
+    const timerDisplay = document.getElementById("timerDisplay");
+    const timerModeLabel = document.getElementById("timerModeLabel");
+    const btnStartPause = document.getElementById("btnStartPause");
+    const btnReset = document.getElementById("btnReset");
+    const presetButtons = document.querySelectorAll(".btn-preset");
+
+    // Audio synth function for premium beep cues
+    function playTimerBeep(freq = 880, length = 0.12) {
+      try {
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContext) return;
+        const ctx = new AudioContext();
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(freq, ctx.currentTime);
+        gain.gain.setValueAtTime(0.08, ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + length);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start();
+        osc.stop(ctx.currentTime + length);
+      } catch (e) {
+        console.warn("Web Audio API blocked or not supported:", e);
+      }
+    }
+
+    function formatTime(secs) {
+      const mins = Math.floor(secs / 60);
+      const remainingSecs = secs % 60;
+      return `${String(mins).padStart(2, '0')}:${String(remainingSecs).padStart(2, '0')}`;
+    }
+
+    function updateTimerUI() {
+      timerDisplay.textContent = formatTime(timerSeconds);
+      if (timerSeconds <= 10 && timerSeconds > 0) {
+        timerDisplay.classList.add("danger");
+        timerModeLabel.textContent = "タイマー（残り時間わずか！）";
+      } else if (timerSeconds === 0) {
+        timerDisplay.classList.add("danger");
+        timerModeLabel.textContent = "タイムアップ！";
+      } else {
+        timerDisplay.classList.remove("danger");
+        if (timerRunning) {
+          timerModeLabel.textContent = "タイマー（カウントダウン中）";
+        } else {
+          timerModeLabel.textContent = "タイマー（一時停止中）";
+        }
+      }
+    }
+
+    function startTimer() {
+      if (timerInterval) clearInterval(timerInterval);
+      timerRunning = true;
+      btnStartPause.textContent = "⏸ 一時停止";
+      btnStartPause.style.background = "#d97706"; // amber
+      updateTimerUI();
+
+      timerInterval = setInterval(() => {
+        if (timerSeconds > 0) {
+          timerSeconds--;
+          updateTimerUI();
+
+          // Beep at 3, 2, 1, and low pitch beep at 0
+          if (timerSeconds <= 3 && timerSeconds > 0) {
+            playTimerBeep(880, 0.1);
+          } else if (timerSeconds === 0) {
+            // Triple final beep
+            playTimerBeep(440, 0.4);
+            setTimeout(() => playTimerBeep(440, 0.4), 150);
+            setTimeout(() => playTimerBeep(440, 0.4), 300);
+            stopTimer();
+          }
+        } else {
+          stopTimer();
+        }
+      }, 1000);
+    }
+
+    function stopTimer() {
+      timerRunning = false;
+      btnStartPause.textContent = "▶ スタート";
+      btnStartPause.style.background = "var(--accent)";
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      updateTimerUI();
+    }
+
+    btnStartPause.addEventListener("click", () => {
+      if (timerRunning) {
+        stopTimer();
+      } else {
+        if (timerSeconds > 0) {
+          startTimer();
+        }
+      }
+    });
+
+    btnReset.addEventListener("click", () => {
+      stopTimer();
+      // Reset to last chosen preset or default 120s
+      const activePreset = document.querySelector(".btn-preset.active-preset");
+      timerSeconds = activePreset ? parseInt(activePreset.dataset.seconds, 10) : 120;
+      updateTimerUI();
+    });
+
+    presetButtons.forEach((preset) => {
+      preset.addEventListener("click", () => {
+        stopTimer();
+        presetButtons.forEach(b => b.classList.remove("active-preset"));
+        preset.classList.add("active-preset");
+        timerSeconds = parseInt(preset.dataset.seconds, 10);
+        updateTimerUI();
+        showToast(`タイマーを ${formatTime(timerSeconds)} にセットしました`);
+      });
+    });
+
+    // Default active preset
+    const defaultPreset = document.querySelector('.btn-preset[data-seconds="120"]');
+    if (defaultPreset) defaultPreset.classList.add("active-preset");
+
+  </script>
+</body>
+
+</html>
