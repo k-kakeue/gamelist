@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#183c3a">
+  <title>伊豆高原・善積｜大人のおこもり一人旅</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@500;600;700&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap');
+    :root{--ink:#18302e;--deep:#173e3b;--sea:#2d6864;--mist:#e9f0eb;--paper:#f7f3e9;--gold:#bd8b42;--coral:#b6604d;--white:#fffdf8;--line:rgba(24,48,46,.14)}
+    *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);color:var(--ink);font-family:"Zen Kaku Gothic New",sans-serif;line-height:1.8}a{color:inherit}
+    .hero{min-height:88vh;position:relative;overflow:hidden;color:#fff;display:grid;place-items:center;padding:32px;background:linear-gradient(145deg,rgba(11,42,41,.95),rgba(38,89,83,.79)),radial-gradient(circle at 80% 20%,#e7b86b,transparent 35%)}
+    .hero:before,.hero:after{content:"";position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.16)}.hero:before{width:70vw;height:70vw;left:-28vw;bottom:-52vw}.hero:after{width:40vw;height:40vw;right:-15vw;top:-18vw}
+    .hero-inner{width:min(1100px,100%);position:relative;z-index:1}.eyebrow{letter-spacing:.22em;font-size:.78rem;color:#f1d7a6;font-weight:700}.hero h1{font-family:"Noto Serif JP",serif;font-size:clamp(2.7rem,8vw,6.6rem);line-height:1.12;margin:.25em 0}.hero h1 small{display:block;font-size:.28em;letter-spacing:.18em;margin-bottom:.8rem;font-family:"Zen Kaku Gothic New"}.lead{max-width:620px;font-size:clamp(1rem,2vw,1.25rem);color:rgba(255,255,255,.85)}
+    .hero-meta{display:flex;flex-wrap:wrap;gap:12px;margin-top:32px}.pill{border:1px solid rgba(255,255,255,.3);padding:8px 15px;border-radius:99px;background:rgba(255,255,255,.08);backdrop-filter:blur(8px);font-size:.9rem}
+    nav{position:sticky;top:0;z-index:9;background:rgba(247,243,233,.96);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}.nav-inner{max-width:1100px;margin:auto;display:flex;align-items:center;justify-content:space-between;padding:10px 22px;position:relative}.nav-current{font-family:"Noto Serif JP";font-weight:700}.menu-button{width:42px;height:38px;border:1px solid var(--line);border-radius:10px;background:var(--white);display:grid;place-content:center;gap:5px;cursor:pointer}.menu-button span{display:block;width:20px;height:2px;background:var(--deep);transition:.2s}.menu-button[aria-expanded="true"] span:nth-child(1){transform:translateY(7px) rotate(45deg)}.menu-button[aria-expanded="true"] span:nth-child(2){opacity:0}.menu-button[aria-expanded="true"] span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}.nav-menu{position:absolute;right:22px;top:calc(100% + 8px);width:min(360px,calc(100vw - 44px));background:var(--white);border:1px solid var(--line);border-radius:16px;padding:10px;box-shadow:0 18px 50px rgba(24,48,46,.18);display:none;grid-template-columns:1fr 1fr;gap:4px}.nav-menu.open{display:grid}.nav-menu a{text-decoration:none;font-weight:700;font-size:.88rem;padding:10px 12px;border-radius:9px}.nav-menu a:hover,.nav-menu a.active{background:var(--mist);color:var(--coral)}
+    main{max-width:1100px;margin:auto;padding:76px 22px}.intro{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;margin-bottom:96px}.intro h2,.section-title{font-family:"Noto Serif JP",serif;font-size:clamp(2rem,4vw,3.4rem);line-height:1.4;margin:0}.intro p{font-size:1.05rem}.quote{padding:30px;border-left:4px solid var(--gold);background:var(--white);box-shadow:0 16px 45px rgba(32,61,56,.08);font-family:"Noto Serif JP",serif;font-size:1.3rem}
+    .section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin:82px 0 30px}.day-label{color:var(--coral);font-weight:700;letter-spacing:.15em;font-size:.8rem}.section-note{color:#64716e;font-size:.9rem;max-width:320px}
+    .timeline{position:relative;margin-left:18px}.timeline:before{content:"";position:absolute;left:11px;top:10px;bottom:10px;width:1px;background:var(--sea)}.event{display:grid;grid-template-columns:48px 90px 1fr;gap:18px;margin:0 0 13px;position:relative}.dot{width:23px;height:23px;border-radius:50%;background:var(--paper);border:6px solid var(--sea);margin-top:23px;z-index:1}.time{font-weight:700;color:var(--sea);padding-top:20px}.card{background:var(--white);border:1px solid var(--line);border-radius:18px;padding:20px 24px;transition:.2s}.card:hover{transform:translateY(-2px);box-shadow:0 14px 35px rgba(32,61,56,.09)}.card h3{font-family:"Noto Serif JP";margin:0 0 4px;font-size:1.25rem}.card p{margin:0;color:#53615f}.main-event .card{background:var(--deep);color:white;border:0}.main-event .card p{color:rgba(255,255,255,.76)}.main-event .dot{border-color:var(--gold)}
+    .stay{margin:90px 0;background:var(--deep);color:#fff;border-radius:28px;overflow:hidden;display:grid;grid-template-columns:1fr 1fr}.stay-copy{padding:clamp(30px,6vw,64px)}.stay-copy h2{font-family:"Noto Serif JP";font-size:clamp(2rem,4vw,3.5rem);margin:0}.stay-copy p{color:rgba(255,255,255,.75)}.stay-list{padding:clamp(30px,6vw,64px);background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(189,139,66,.18));display:grid;gap:12px}.stay-list div{border-bottom:1px solid rgba(255,255,255,.16);padding:10px 0;display:flex;gap:15px}.stay-list b{color:#efcd91;min-width:58px}
+    .options{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}.option{background:var(--white);padding:26px;border-radius:18px;border:1px solid var(--line)}.option span{color:var(--coral);font-weight:700;font-size:.8rem}.option h3{font-family:"Noto Serif JP";font-size:1.35rem;margin:4px 0}.option p{margin:0;color:#5a6764}
+    .check-area{margin-top:90px;padding:clamp(28px,5vw,52px);background:#e4ece7;border-radius:28px}.checks{display:grid;grid-template-columns:repeat(2,1fr);gap:10px 24px;margin-top:24px}.checks label{background:rgba(255,255,255,.65);padding:13px 16px;border-radius:10px;cursor:pointer}.checks input{accent-color:var(--deep);margin-right:9px}
+    .actions{display:flex;gap:12px;margin-top:26px}.btn{border:0;border-radius:99px;padding:12px 19px;background:var(--deep);color:#fff;font:inherit;font-weight:700;cursor:pointer}.btn.secondary{background:transparent;color:var(--ink);border:1px solid var(--ink)}
+    .info-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:28px 0 70px}.info-box{background:var(--white);border:1px solid var(--line);border-radius:16px;padding:18px}.info-box b{display:block;color:var(--coral);font-size:.75rem;letter-spacing:.1em}.info-box span{font-family:"Noto Serif JP";font-size:1.08rem}.editable{outline:none;border-bottom:1px dashed var(--gold);min-width:6em;display:inline-block;padding:0 .2em}.detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}.detail{background:var(--white);padding:24px;border-radius:18px;border:1px solid var(--line)}.detail h3{font-family:"Noto Serif JP";margin:0 0 12px}.detail dl{margin:0;display:grid;grid-template-columns:95px 1fr;gap:7px 10px;font-size:.92rem}.detail dt{font-weight:700;color:var(--sea)}.detail dd{margin:0}.route{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:11px 0}.route i{font-style:normal;color:var(--gold);font-weight:700}.notice{margin:22px 0;padding:17px 20px;border-radius:12px;background:#fff4df;border-left:4px solid var(--gold);font-size:.92rem}.budget{width:100%;border-collapse:collapse;background:var(--white);border-radius:16px;overflow:hidden}.budget th,.budget td{padding:13px 16px;border-bottom:1px solid var(--line);text-align:left}.budget th{background:var(--deep);color:#fff}.budget td:last-child{text-align:right;font-weight:700}.plan-b{padding:22px;border-radius:16px;background:#eef1ed;margin-top:18px}.links a{display:inline-block;margin:4px 8px 4px 0;color:var(--sea);font-weight:700}.small{font-size:.82rem;color:#687470}.stamp{font-family:"Noto Serif JP";border:1px solid rgba(255,255,255,.35);padding:13px 18px;margin-top:28px;display:inline-grid;grid-template-columns:auto auto;gap:4px 18px;background:rgba(255,255,255,.06)}
+    .walk-grid{display:grid;gap:22px}.walk-card{background:var(--white);border:1px solid var(--line);border-radius:22px;padding:clamp(22px,4vw,34px)}.walk-top{display:flex;justify-content:space-between;gap:20px;align-items:start}.walk-top h3{font-family:"Noto Serif JP";font-size:1.55rem;margin:0}.walk-tags{display:flex;gap:7px;flex-wrap:wrap;margin-top:9px}.walk-tags span{font-size:.77rem;border-radius:99px;background:var(--mist);padding:5px 10px;font-weight:700}.walk-level{white-space:nowrap;color:var(--coral);font-weight:700}.walk-steps{display:grid;grid-template-columns:repeat(5,1fr);margin:28px 0 18px}.walk-step{position:relative;padding:28px 10px 0;text-align:center;font-size:.84rem;font-weight:700}.walk-step:before{content:"";position:absolute;left:0;right:0;top:9px;height:2px;background:#c7d2cd}.walk-step:after{content:"";position:absolute;top:3px;left:calc(50% - 7px);width:14px;height:14px;border-radius:50%;background:var(--sea);border:3px solid var(--white)}.walk-notes{display:grid;grid-template-columns:1fr 1fr;gap:12px;font-size:.9rem}.walk-notes div{padding:13px 15px;background:#f3f1e9;border-radius:10px}.walk-notes b{color:var(--sea)}
+    .view-toggle{margin-left:auto;border:1px solid var(--deep);background:var(--deep);color:#fff;border-radius:99px;padding:6px 13px;font:inherit;font-size:.78rem;font-weight:700;cursor:pointer;white-space:nowrap}.tap-hint{display:none;text-align:right;color:#76817e;font-size:.76rem;margin-top:5px}
+    body.compact .hero{min-height:48vh}.compact main{padding-top:36px}.compact .intro{margin-bottom:42px}.compact .section-head{margin:42px 0 18px}.compact .stay{margin:46px 0}.compact .event{margin-bottom:7px}.compact .event .card{padding:12px 18px;cursor:pointer}.compact .event .dot{margin-top:15px}.compact .event .time{padding-top:12px}.compact .event .card p{display:none}.compact .event.open .card p{display:block;margin-top:6px}.compact .walk-grid{grid-template-columns:repeat(3,1fr);gap:12px}.compact .walk-card{padding:20px;cursor:pointer}.compact .walk-card .walk-steps,.compact .walk-card .walk-notes{display:none}.compact .walk-card.open{grid-column:1/-1}.compact .walk-card.open .walk-steps{display:grid}.compact .walk-card.open .walk-notes{display:grid}.compact .walk-top{display:block}.compact .walk-level{margin-top:8px}.compact .tap-hint{display:block}.compact .check-area{margin-top:45px}.compact .info-grid{margin-bottom:30px}.compact .detail-grid .detail{padding:18px}
+    body.paged .hero{display:none}body.paged.home-page .hero{display:grid;min-height:48vh}body.paged main{padding-top:34px;min-height:72vh}body.paged main>section{display:none}body.paged main>section.page-active{display:block;animation:pageIn .22s ease}body.paged .section-head{margin-top:18px}body.paged .intro{margin-bottom:20px}body.paged nav a.active{color:var(--coral);border-bottom:2px solid var(--coral)}.page-controls{display:flex;justify-content:space-between;align-items:center;gap:14px;margin:45px 0 5px;padding-top:22px;border-top:1px solid var(--line)}.page-controls button{border:1px solid var(--deep);border-radius:99px;background:transparent;color:var(--deep);padding:9px 16px;font:inherit;font-weight:700;cursor:pointer}.page-controls button:hover{background:var(--deep);color:#fff}.page-count{font-size:.82rem;color:#687470}@keyframes pageIn{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+    /* Modern travel-app theme */
+    :root{--ink:#172033;--deep:#18233f;--sea:#256b77;--mist:#edf3f5;--paper:#f4f6f8;--gold:#e2a95c;--coral:#e05f52;--white:#ffffff;--line:rgba(23,32,51,.1)}
+    body{background:linear-gradient(135deg,#f7f9fb 0%,#eef3f5 100%);font-family:"Zen Kaku Gothic New",system-ui,sans-serif;letter-spacing:.01em}.hero{min-height:62vh;background:radial-gradient(circle at 82% 18%,rgba(255,196,111,.32),transparent 25%),radial-gradient(circle at 10% 90%,rgba(62,180,184,.24),transparent 30%),linear-gradient(135deg,#101a32 0%,#173e4a 100%)}.hero:before{width:520px;height:520px;left:-230px;bottom:-370px}.hero:after{width:360px;height:360px;right:-120px;top:-220px}.hero h1{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:700;letter-spacing:-.045em}.hero h1 small{font-weight:500;letter-spacing:.2em}.eyebrow{color:#8ed7d5}.pill{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.18);box-shadow:inset 0 1px rgba(255,255,255,.1)}.stamp{font-family:inherit;border-radius:14px;border-color:rgba(255,255,255,.18);backdrop-filter:blur(12px)}
+    nav{background:rgba(255,255,255,.86);box-shadow:0 8px 30px rgba(23,32,51,.06)}.nav-current{font-family:inherit;letter-spacing:-.02em}.menu-button{border:0;background:#eef2f6;box-shadow:inset 0 0 0 1px rgba(23,32,51,.06)}.nav-menu{border:0;border-radius:18px;box-shadow:0 24px 70px rgba(23,32,51,.18);padding:12px}.nav-menu a{border-radius:11px;font-weight:500}.nav-menu a:hover,.nav-menu a.active{background:#edf4f5;color:#16717a}
+    main{max-width:1160px}.intro h2,.section-title{font-family:"Zen Kaku Gothic New",sans-serif;font-weight:700;letter-spacing:-.045em}.day-label{color:#df5f52;letter-spacing:.18em}.quote{border:0;border-radius:22px;box-shadow:0 18px 55px rgba(23,32,51,.08);font-family:inherit;font-weight:500;position:relative;overflow:hidden}.quote:before{content:'“';position:absolute;right:20px;top:-30px;font-size:9rem;line-height:1;color:rgba(37,107,119,.08);font-family:serif}
+    .card,.detail,.option,.info-box,.walk-card{border:0;box-shadow:0 10px 35px rgba(23,32,51,.055)}.card{border-radius:16px}.card h3,.detail h3,.option h3,.walk-top h3{font-family:inherit;letter-spacing:-.025em}.main-event .card{background:linear-gradient(135deg,#18233f,#174b58);box-shadow:0 16px 42px rgba(24,35,63,.2)}.timeline:before{background:#c7d5d7}.dot{border-color:#2b7e86;background:#f4f6f8}.main-event .dot{border-color:#eead58}.stay{background:linear-gradient(135deg,#151f38,#174b58);border-radius:26px;box-shadow:0 22px 70px rgba(23,32,51,.16)}.stay-copy h2{font-family:inherit;letter-spacing:-.04em}.stay-list{background:linear-gradient(145deg,rgba(255,255,255,.04),rgba(73,190,181,.12))}.stay-list b{color:#8ed7d5}
+    .info-box{border-radius:14px}.editable{border-bottom-color:#e2a95c}.notice{border:0;border-left:4px solid #e2a95c;background:#fff7e8;border-radius:12px}.walk-tags span{background:#edf4f5;color:#286b73}.walk-step:after{background:#2b7e86}.walk-notes div,.plan-b{background:#eef3f5}.budget{box-shadow:0 12px 40px rgba(23,32,51,.06)}.budget th{background:#18233f}.check-area{background:linear-gradient(135deg,#e6f0f0,#edf1f7);box-shadow:inset 0 0 0 1px rgba(23,32,51,.05)}.checks label{background:rgba(255,255,255,.8);box-shadow:0 4px 14px rgba(23,32,51,.035)}.btn{background:#18233f}.page-controls button{border:0;background:#fff;box-shadow:0 6px 20px rgba(23,32,51,.08);padding:11px 18px}.page-controls button:hover{background:#18233f}.page-count{background:#e8edef;padding:6px 11px;border-radius:99px}.links a{color:#18727b}.section-note{color:#6d7789}
+    footer{text-align:center;padding:35px 20px 60px;color:#66736f;font-size:.85rem}
+    @media(max-width:720px){.hero{min-height:78vh}.intro,.stay{grid-template-columns:1fr}.section-head{display:block}.section-note{margin-top:8px}.event{grid-template-columns:36px 62px 1fr;gap:8px}.timeline{margin-left:0}.timeline:before{left:11px}.card{padding:17px}.options,.checks,.detail-grid,.walk-notes{grid-template-columns:1fr}.info-grid{grid-template-columns:1fr 1fr}.stay{border-radius:20px}.hero-meta{gap:7px}.pill{font-size:.8rem}.detail dl{grid-template-columns:80px 1fr}.walk-top{display:block}.walk-level{margin-top:8px}.walk-steps{grid-template-columns:1fr;margin-left:12px}.walk-step{text-align:left;padding:4px 0 16px 28px}.walk-step:before{left:6px;top:0;bottom:0;width:2px;height:auto;right:auto}.walk-step:after{left:0;top:7px}.compact .walk-grid{grid-template-columns:1fr}.compact .walk-card.open{grid-column:auto}.compact .hero{min-height:52vh}.nav-menu{grid-template-columns:1fr 1fr}}
+    @media print{nav,.actions{display:none}.hero{min-height:auto;padding:60px 30px}.hero h1{font-size:3rem}main{padding-top:35px}.card{break-inside:avoid}.stay{break-inside:avoid}.check-area{break-inside:avoid}}
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">IZU KOGEN · SOLO RETREAT</div>
+      <h1><small>海と温泉にほどける</small>大人のおこもり<br>一人旅</h1>
+      <p class="lead">観光を詰め込まず、予約した「はなれ宿 善積」を旅の主役に。城ヶ崎の海、大室山の風、そして誰にも急かされない一泊二日。</p>
+      <div class="hero-meta"><span class="pill">1泊2日</span><span class="pill">東京発</span><span class="pill">伊豆高原</span><span class="pill">朝夕お部屋食</span><span class="pill">客室露天風呂</span><span class="pill">¥45,000</span></div>
+      <div class="stamp"><span>旅行日</span><span class="editable" contenteditable="true" data-save="date">2026年8月20日〜21日</span><span>旅人</span><span class="editable" contenteditable="true" data-save="name">お名前</span></div>
+    </div>
+  </header>
+  <nav><div class="nav-inner"><span class="nav-current" id="navCurrent">表紙・テーマ</span><button class="menu-button" id="menuButton" type="button" aria-label="メニューを開く" aria-expanded="false"><span></span><span></span><span></span></button><div class="nav-menu" id="navMenu"><a href="#concept">表紙・テーマ</a><a href="#booking">予約情報</a><a href="#day1">1日目</a><a href="#route-note">移動案内</a><a href="#stay">善積</a><a href="#day2">2日目</a><a href="#lunch">食事</a><a href="#walks">散策</a><a href="#budget">予算</a><a href="#plan-b">雨天案</a><a href="#memo">持ち物</a><a href="#useful-links">リンク</a></div></div></nav>
+  <main>
+    <section class="intro" id="concept">
+      <div><div class="day-label">THE CONCEPT</div><h2>伊豆を巡る旅ではなく、<br>善積を味わう旅。</h2><p>移動も観光も軽やかに。15時にチェックインしたら、海を望む離れの和室で、客室露天風呂と金目鯛の懐石を心ゆくまで楽しみます。</p></div>
+      <div class="quote">「45,000円の宿を楽しみに行き、<br>ついでに伊豆を観光する」<br><small>— この旅の、いちばん大切な配分</small></div>
+    </section>
+
+    <section id="booking">
+      <div class="section-head"><div><div class="day-label">BOOKING SHEET</div><h2 class="section-title">予約・基本情報</h2></div><p class="section-note">点線部分はクリックして入力できます。入力内容はこのブラウザに保存されます。</p></div>
+      <div class="info-grid">
+        <div class="info-box"><b>宿泊日</b><span class="editable" contenteditable="true" data-save="staydate">2026年8月20日（木）</span></div>
+        <div class="info-box"><b>予約番号</b><span class="editable" contenteditable="true" data-save="reserve">未記入</span></div>
+        <div class="info-box"><b>宿泊料金</b><span>45,000円</span></div>
+        <div class="info-box"><b>往路列車</b><span class="editable" contenteditable="true" data-save="train1">普通列車（予約不要）</span></div>
+        <div class="info-box"><b>復路列車</b><span class="editable" contenteditable="true" data-save="train2">踊り子66号</span></div>
+        <div class="info-box"><b>客室</b><span class="editable" contenteditable="true" data-save="room">当日確認</span></div>
+      </div>
+      <div class="detail-grid">
+        <article class="detail"><h3>はなれ宿 善積</h3><dl><dt>住所</dt><dd>〒413-0234 静岡県伊東市伊豆高原南大室台4-24</dd><dt>電話</dt><dd><a href="tel:0557553131">0557-55-3131</a>（受付14:00〜20:00）</dd><dt>アクセス</dt><dd>伊豆高原駅からタクシー約8分</dd><dt>予約プラン</dt><dd>大人のおこもり一人旅／露天風呂付離れ客室／金目鯛と旬の懐石／朝夕お部屋食</dd><dt>滞在目安</dt><dd>15:00チェックイン、11:00チェックアウト</dd></dl></article>
+        <article class="detail"><h3>列車予約メモ</h3><dl><dt>往路</dt><dd><span class="editable" contenteditable="true" data-save="outbound">蒲田 → 川崎 → 熱海 → 伊東 → 伊豆高原（普通列車）</span></dd><dt>復路</dt><dd><span class="editable" contenteditable="true" data-save="inbound">8/21 伊豆高原17:33発 → 東京19:50着／踊り子66号</span></dd><dt>購入方法</dt><dd>復路のみ、えきねっと・指定席券売機・みどりの窓口</dd><dt>確認</dt><dd>踊り子は全車指定席。乗車券と特急券の受取・IC連携を前日までに確認。</dd></dl></article>
+      </div>
+      <div class="notice"><b>交通方針：</b>行きは安さ優先で普通列車、帰りは疲れを残さないよう特急を利用。踊り子66号は8月21日に運転予定です。全車指定席のため、空席を確認して早めに予約してください。</div>
+    </section>
+
+    <section id="day1">
+      <div class="section-head"><div><div class="day-label">DAY 01 · SEA</div><h2 class="section-title">海を見て、15時に宿へ</h2></div><p class="section-note">夜の懐石に備え、昼は軽め。真夏の移動はタクシーを上手に使う。</p></div>
+      <div class="timeline">
+        <div class="event"><div class="dot"></div><div class="time">7:30頃</div><div class="card"><h3>蒲田駅を出発</h3><p>京浜東北線で川崎へ。普通列車のみなので予約不要。Suica／PASMOでそのまま乗車できます。</p></div></div>
+        <div class="event"><div class="dot"></div><div class="time">7:40頃</div><div class="card"><h3>川崎で東海道線へ</h3><p>熱海行き、または小田原方面行きに乗車。熱海まで約1時間半のため、座れそうな車両を選びます。</p></div></div>
+        <div class="event"><div class="dot"></div><div class="time">9:30頃</div><div class="card"><h3>熱海で伊東線へ</h3><p>伊東行きまたは伊豆急下田行きへ。伊豆急下田行きなら伊東で乗り換えず、伊豆高原まで直通です。</p></div></div>
+        <div class="event"><div class="dot"></div><div class="time">11:10</div><div class="card"><h3>伊豆高原駅・荷物整理</h3><p>改札、コインロッカー、帰りの乗り場を確認。大きな荷物は駅に預け、身軽に観光します。</p></div></div>
+        <div class="event"><div class="dot"></div><div class="time">11:20</div><div class="card"><h3>軽めの昼食</h3><p>第一候補は手打そば。滞在は50分ほど。夜の懐石を主役に、天ぷらや大盛りは控えめに。</p></div></div>
+        <div class="event"><div class="dot"></div><div class="time">12:20</div><div class="card"><h3>城ヶ崎海岸へ移動</h3><p>暑さと時間を考え、伊豆高原駅から門脇つり橋周辺まではタクシー推奨。帰りのタクシーも降車時に相談。</p></div></div>
+        <div class="event"><div class="dot"></div><div class="time">12:40</div><div class="card"><h3>門脇吊橋・灯台</h3><p>吊橋は長さ48m、高さ約23m。灯台展望台と周辺を約60〜75分散策。足元が悪い場合は短縮し、水分補給を優先。</p></div></div>
+        <div class="event"><div class="dot"></div><div class="time">14:05</div><div class="card"><h3>善積へ移動</h3><p>タクシーで直接宿へ。駅に荷物を預けた場合は駅経由で回収し、14:50頃の到着を目指します。</p></div></div>
+        <div class="event main-event"><div class="dot"></div><div class="time">15:00</div><div class="card"><h3>はなれ宿 善積にチェックイン</h3><p>ここからが旅の本番。以後は宿から出ず、離れの客室で静かに過ごします。</p></div></div>
+      </div>
+    </section>
+
+    <section id="route-note">
+      <div class="section-head"><div><div class="day-label">DAY 1 · ROUTE NOTE</div><h2 class="section-title">移動の要点</h2></div></div>
+      <div class="detail-grid"><article class="detail"><h3>蒲田から伊豆高原</h3><div class="route"><span>蒲田</span><i>→</i><span>川崎</span><i>→</i><span>熱海</span><i>→</i><span>伊東</span><i>→</i><span>伊豆高原</span></div><p class="small">普通列車で片道約3時間・約3,000円。熱海発の伊豆急下田行きに乗れれば、伊東での乗換は不要です。</p></article><article class="detail"><h3>城ヶ崎海岸</h3><div class="route"><span>伊豆高原駅</span><i>→ タクシー →</i><span>門脇吊橋</span><i>→ タクシー →</i><span>善積</span></div><p class="small">城ヶ崎海岸駅から徒歩の場合は約35分。8月はタクシー利用を推奨します。</p></article></div>
+    </section>
+
+    <section class="stay" id="stay">
+      <div class="stay-copy"><div class="day-label" style="color:#efcd91">PRIVATE RYOKAN TIME</div><h2>何もしない、を<br>丁寧に楽しむ。</h2><p>海一望の露天風呂、和室、朝夕の部屋食。時間を埋めるのではなく、余白を味わう夜です。</p></div>
+      <div class="stay-list"><div><b>15:15</b><span>部屋でひと息 → 最初の露天風呂</span></div><div><b>16:00</b><span>海を眺めて、ごろごろ</span></div><div><b>17:00</b><span>夕暮れ前に、もう一度温泉</span></div><div><b>18:00</b><span>金目鯛と旬の懐石を部屋で</span></div><div><b>20:00</b><span>食後の休憩、お酒や読書</span></div><div><b>21:00</b><span>夜の客室露天風呂</span></div><div><b>22:00〜</b><span>好きなだけ静かな夜を</span></div></div>
+    </section>
+
+    <section id="day2">
+      <div class="section-head"><div><div class="day-label">DAY 02 · SKY</div><h2 class="section-title">朝風呂から、大室山へ</h2></div><p class="section-note">チェックアウト直前まで宿を満喫。午後は高原の風景と伊豆の味を。</p></div>
+      <div class="timeline">
+        <div class="event main-event"><div class="dot"></div><div class="time">7:00</div><div class="card"><h3>海を眺めながら朝風呂</h3><p>一人旅だからこそ、目覚めた時間にそのまま露天風呂へ。</p></div></div>
+        <div class="event"><div class="dot"></div><div class="time">8:00</div><div class="card"><h3>部屋で朝食</h3><p>朝食 → コーヒー → ごろごろ → 最後にもう一度温泉。</p></div></div>
+        <div class="event"><div class="dot"></div><div class="time">10:30</div><div class="card"><h3>ゆっくりチェックアウト</h3><p>標準チェックアウトの11時近くまで滞在して大丈夫。</p></div></div>
+        <div class="event"><div class="dot"></div><div class="time">11:10</div><div class="card"><h3>タクシーで大室山へ</h3><p>チェックアウト時に宿から配車。荷物は携行するか、先に伊豆高原駅のロッカーへ預けます。</p></div></div>
+        <div class="event"><div class="dot"></div><div class="time">11:30</div><div class="card"><h3>大室山・お鉢めぐり</h3><p>往復リフト1,000円。標高580mの山頂遊歩道は約1km、20〜30分。写真と休憩を含めて約75分確保。</p></div></div>
+        <div class="event"><div class="dot"></div><div class="time">13:00</div><div class="card"><h3>伊豆で最後の昼食</h3><p>しっかり食べるなら伊豆高原ビール本店の海鮮。まだ重ければ妙ぎ亭の蕎麦。</p></div></div>
+        <div class="event"><div class="dot"></div><div class="time">14:30</div><div class="card"><h3>午後の自由時間</h3><p>大室山と昼食後も急がず、カフェ、さくらの里、伊豆高原駅周辺などから体調と天候に合わせて選びます。</p></div></div>
+        <div class="event"><div class="dot"></div><div class="time">16:30</div><div class="card"><h3>伊豆高原駅へ</h3><p>お土産購入と休憩。発車30分前の17:00頃までには改札周辺へ戻り、飲み物を準備します。</p></div></div>
+        <div class="event main-event"><div class="dot"></div><div class="time">17:33</div><div class="card"><h3>踊り子66号で東京へ</h3><p>伊豆高原から東京まで乗換なし。東京19:50着予定。その後、京浜東北線で蒲田へ。</p></div></div>
+      </div>
+      <div class="notice"><b>大室山：</b>3〜9月は9:00〜17:00（下り最終17:15）。強風・雷・視界不良などで運休するため、出発前に公式サイトの運行情報を確認してください。</div>
+    </section>
+
+    <section id="lunch">
+      <div class="section-head"><div><div class="day-label">LUNCH OPTIONS</div><h2 class="section-title">食事の選び方</h2></div></div>
+      <div class="options"><article class="option"><span>DAY 1 · LIGHT</span><h3>蕎麦で軽やかに</h3><p>夜の金目鯛と懐石を最高の状態で味わうため、初日は欲張らない。</p></article><article class="option"><span>DAY 2 · YOUR CHOICE</span><h3>海鮮、または蕎麦</h3><p>朝食後のお腹と相談。伊豆らしく締めるなら海鮮、軽く済ませるなら蕎麦。</p></article></div>
+    </section>
+
+    <section id="walks">
+      <div class="section-head"><div><div class="day-label">WALKING COURSES</div><h2 class="section-title">伊豆を歩く、3つの散策</h2></div><p class="section-note">8月の暑さを考え、長距離縦走ではなく見どころを絞ったコースです。</p></div>
+      <div class="walk-grid">
+        <article class="walk-card">
+          <div class="walk-top"><div><h3>① 城ヶ崎・絶景コンパクトコース</h3><div class="walk-tags"><span>8月20日</span><span>約1km</span><span>60〜75分</span><span>トイレ・自販機あり</span></div></div><div class="walk-level">難易度 ★★☆</div></div>
+          <div class="walk-steps"><div class="walk-step">門脇駐車場<br>タクシー降車</div><div class="walk-step">門脇埼灯台<br>展望台</div><div class="walk-step">門脇つり橋<br>長さ48m</div><div class="walk-step">海岸遊歩道<br>溶岩地形</div><div class="walk-step">駐車場へ戻る<br>タクシー乗車</div></div>
+          <div class="walk-notes"><div><b>見どころ：</b>高さ約23mの吊橋、灯台からの相模灘、約4,000年前の噴火でできた溶岩海岸。</div><div><b>短縮：</b>暑い・雨・足元が悪い場合は「駐車場→灯台→吊橋→駐車場」の20〜30分で十分です。</div><div><b>足元：</b>石や木の根があるためスニーカー推奨。写真撮影中も崖際と足元に注意。</div><div><b>休憩：</b>門脇駐車場周辺にトイレ、売店、自販機。歩く前に飲み物を用意します。</div></div>
+        </article>
+        <article class="walk-card">
+          <div class="walk-top"><div><h3>② 大室山・お鉢めぐりコース</h3><div class="walk-tags"><span>8月21日</span><span>約1km</span><span>45〜60分</span><span>標高580m</span></div></div><div class="walk-level">難易度 ★★☆</div></div>
+          <div class="walk-steps"><div class="walk-step">山麓駅<br>往復券購入</div><div class="walk-step">リフト約6分<br>山頂駅</div><div class="walk-step">浅間神社<br>火口東側</div><div class="walk-step">山頂・三角点<br>最高地点</div><div class="walk-step">一周完了<br>リフト下山</div></div>
+          <div class="walk-notes"><div><b>歩き方：</b>山頂遊歩道を一周。公式所要20〜30分ですが、写真と休憩を含め45〜60分確保。</div><div><b>景色：</b>晴天なら富士山、相模湾、伊豆諸島、天城連山を一望できます。</div><div><b>注意：</b>日陰が少なく風が強い場所。帽子を固定し、日差しと水分不足に注意。</div><div><b>運休時：</b>徒歩登山は禁止。リフト運休なら山麓の「さくらの里」へ切り替えます。</div></div>
+        </article>
+        <article class="walk-card">
+          <div class="walk-top"><div><h3>③ さくらの里・午後のゆったりコース</h3><div class="walk-tags"><span>8月21日</span><span>約1〜1.5km</span><span>30〜45分</span><span>無料</span></div></div><div class="walk-level">難易度 ★☆☆</div></div>
+          <div class="walk-steps"><div class="walk-step">大室山<br>山麓</div><div class="walk-step">さくらの里<br>入口</div><div class="walk-step">芝生広場<br>大室山を撮影</div><div class="walk-step">東屋で休憩<br>水分補給</div><div class="walk-step">バス・タクシー<br>伊豆高原駅へ</div></div>
+          <div class="walk-notes"><div><b>使い方：</b>踊り子66号まで時間があるときの追加散策。大室山を麓から眺めます。</div><div><b>8月の景色：</b>桜の季節ではありませんが、約4万㎡の広い芝生と大室山の姿を楽しめます。</div><div><b>休憩：</b>東屋と観光トイレあり。日なたを避け、15〜20分ごとに休憩。</div><div><b>終了目安：</b>16:00までに出発し、16:30頃に伊豆高原駅へ。17:33発に余裕を持たせます。</div></div>
+        </article>
+      </div>
+      <div class="notice"><b>真夏の判断基準：</b>「全部歩く」より「一番見たい景色まで歩いて戻る」で十分です。雷・強風・大雨時は海岸と山頂の散策を中止してください。</div>
+    </section>
+
+    <section id="budget">
+      <div class="section-head"><div><div class="day-label">BUDGET</div><h2 class="section-title">予算の目安</h2></div><p class="section-note">交通費・飲食代は概算。実際の予約額を点線欄に書き換えられます。</p></div>
+      <table class="budget"><thead><tr><th>項目</th><th>メモ</th><th>目安</th></tr></thead><tbody><tr><td>宿泊</td><td>善積・1泊2食</td><td>45,000円</td></tr><tr><td>往復交通</td><td>往路普通＋復路踊り子</td><td><span class="editable" contenteditable="true" data-save="railcost">約8,000円</span></td></tr><tr><td>現地移動</td><td>タクシー数回＋バス予備</td><td><span class="editable" contenteditable="true" data-save="taxicost">約6,000円</span></td></tr><tr><td>昼食2回</td><td>蕎麦・海鮮</td><td>約4,000円</td></tr><tr><td>観光</td><td>大室山リフト</td><td>1,000円</td></tr><tr><td>お土産・予備費</td><td>飲み物を含む</td><td>約5,000円</td></tr><tr><td><b>合計</b></td><td>余裕を持った概算</td><td>約69,000円</td></tr></tbody></table>
+    </section>
+
+    <section id="plan-b">
+      <div class="section-head"><div><div class="day-label">PLAN B</div><h2 class="section-title">雨・強風のとき</h2></div></div>
+      <div class="plan-b"><b>1日目：</b>城ヶ崎海岸を短縮または中止し、伊豆高原駅周辺で昼食後、宿へ早めに向かえるか電話で相談。チェックイン前なら駅周辺でカフェ・お土産。</div>
+      <div class="plan-b"><b>2日目：</b>大室山リフト運休時は無理に向かわず、伊東方面の屋内施設や駅周辺でゆっくり昼食。復路列車は予定どおり利用できるよう、駅へ早めに戻る。</div>
+    </section>
+
+    <section class="check-area" id="memo">
+      <div class="day-label">TRAVEL CHECKLIST</div><h2 class="section-title">旅支度メモ</h2>
+      <div class="checks"><label><input type="checkbox">踊り子の指定席を予約</label><label><input type="checkbox">宿泊日・チェックイン時刻を再確認</label><label><input type="checkbox">乗車券・IC連携を確認</label><label><input type="checkbox">現金・身分証・健康保険証</label><label><input type="checkbox">歩きやすく滑りにくい靴</label><label><input type="checkbox">日傘・帽子・飲み物</label><label><input type="checkbox">日焼け止め・汗拭きタオル</label><label><input type="checkbox">常備薬・酔い止め</label><label><input type="checkbox">モバイルバッテリー</label><label><input type="checkbox">充電器・イヤホン</label><label><input type="checkbox">宿で読む本／観る動画</label><label><input type="checkbox">帰宅日の天気と運行情報</label></div>
+      <div class="actions"><button class="btn" onclick="window.print()">旅程を印刷</button><button class="btn secondary" id="reset">チェックをリセット</button></div>
+    </section>
+    <section id="useful-links"><div class="section-head"><div><div class="day-label">USEFUL LINKS</div><h2 class="section-title">出発前に確認</h2></div></div><div class="detail links"><a href="https://www.yosizumi.com/" target="_blank">善積 公式サイト</a><a href="https://omuroyama.com/hours_fare/" target="_blank">大室山 運行・料金</a><a href="https://itospa.com/spot/detail_54002.html" target="_blank">城ヶ崎海岸 観光案内</a><a href="https://www.eki-net.com/" target="_blank">えきねっと</a><p class="small">情報確認日：2026年8月11日。営業時間、料金、交通時刻は変更される場合があります。</p></div></section>
+  </main>
+  <footer>伊豆高原・善積　一泊二日おこもり旅プラン<br>※列車・施設の時刻、料金、営業状況は旅行前に公式情報をご確認ください。</footer>
+  <script>
+    const boxes=[...document.querySelectorAll('.checks input')];
+    boxes.forEach((box,i)=>{box.checked=localStorage.getItem('izu-check-'+i)==='1';box.addEventListener('change',()=>localStorage.setItem('izu-check-'+i,box.checked?'1':'0'))});
+    document.getElementById('reset').addEventListener('click',()=>boxes.forEach((box,i)=>{box.checked=false;localStorage.removeItem('izu-check-'+i)}));
+    document.querySelectorAll('[data-save]').forEach(el=>{const key='izu-note-'+el.dataset.save;const saved=localStorage.getItem(key);if(saved)el.textContent=saved;el.addEventListener('input',()=>localStorage.setItem(key,el.textContent.trim()))});
+    document.body.classList.remove('compact');
+    document.body.classList.add('paged');
+    const pages=[...document.querySelectorAll('main>section')];
+    const pageLinks=[...document.querySelectorAll('nav a[href^="#"]')];
+    const menuButton=document.getElementById('menuButton'),navMenu=document.getElementById('navMenu'),navCurrent=document.getElementById('navCurrent');
+    const closeMenu=()=>{navMenu.classList.remove('open');menuButton.setAttribute('aria-expanded','false');menuButton.setAttribute('aria-label','メニューを開く')};
+    menuButton.addEventListener('click',e=>{e.stopPropagation();const open=navMenu.classList.toggle('open');menuButton.setAttribute('aria-expanded',String(open));menuButton.setAttribute('aria-label',open?'メニューを閉じる':'メニューを開く')});
+    pageLinks.forEach(link=>link.addEventListener('click',closeMenu));document.addEventListener('click',e=>{if(!e.target.closest('nav'))closeMenu()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMenu()});
+    pages.forEach((page,index)=>{const controls=document.createElement('div');controls.className='page-controls';const prev=document.createElement('button');prev.type='button';prev.textContent='← 前のページ';const count=document.createElement('span');count.className='page-count';count.textContent=`${index+1} / ${pages.length}`;const next=document.createElement('button');next.type='button';next.textContent='次のページ →';prev.style.visibility=index===0?'hidden':'visible';next.style.visibility=index===pages.length-1?'hidden':'visible';prev.addEventListener('click',()=>location.hash='#'+pages[index-1].id);next.addEventListener('click',()=>location.hash='#'+pages[index+1].id);controls.append(prev,count,next);page.appendChild(controls)});
+    const showPage=()=>{const requested=location.hash.slice(1);let page=pages.find(item=>item.id===requested)||pages[0];pages.forEach(item=>item.classList.toggle('page-active',item===page));pageLinks.forEach(link=>link.classList.toggle('active',link.getAttribute('href')==='#'+page.id));const activeLink=pageLinks.find(link=>link.getAttribute('href')==='#'+page.id);navCurrent.textContent=activeLink?.textContent||'旅のしおり';document.body.classList.toggle('home-page',page.id==='concept');closeMenu();window.scrollTo({top:page.id==='concept'?0:document.querySelector('nav').offsetTop,behavior:'instant'});document.title=`${page.querySelector('h2')?.textContent.trim()||'伊豆高原・善積'}｜旅のしおり`};
+    window.addEventListener('hashchange',showPage);showPage();
+  </script>
+</body>
+</html>
