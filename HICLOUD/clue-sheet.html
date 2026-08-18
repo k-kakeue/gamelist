@@ -23,7 +23,7 @@
 </head>
 <body>
 <main class="app">
-  <header class="top"><div><div class="eyebrow">DEDUCTION NOTE / 01</div><h1 class="title">謎解き推理シート</h1><p class="subtitle">マスをタップして、手がかりをチェックしよう。</p></div><div class="actions"><button class="btn" id="reset">リセット</button><button class="btn primary" onclick="print()">印刷する</button></div></header>
+  <header class="top"><div><div class="eyebrow">DEDUCTION NOTE / 01</div><h1 class="title">謎解き推理シート</h1><p class="subtitle">マスをタップして、手がかりをチェックしよう。</p></div></header>
   <section class="board"><div class="grid" id="grid"></div><footer class="legend"><span><i class="dot">✓</i>チェック済み</span><span class="status" id="status">自動保存</span></footer></section>
 </main>
 <script>
@@ -41,7 +41,6 @@ let row=0; sections.forEach(s=>{html+=`<div class="cell section" style="--sc:${s
 function save(){const names=[...document.querySelectorAll('[data-name]')].map(x=>x.value);const marks=Array.from({length:row},()=>Array(7).fill(0));document.querySelectorAll('.mark').forEach(x=>marks[x.dataset.row][x.dataset.col]=+x.dataset.state);localStorage.setItem(key,JSON.stringify({names,marks}));const st=document.querySelector('#status');st.textContent='保存しました';st.classList.add('saved');setTimeout(()=>{st.textContent='自動保存';st.classList.remove('saved')},900)}
 function cycle(el){el.dataset.state=el.dataset.state==='1'?0:1;el.setAttribute('aria-checked',el.dataset.state==='1');save()}
 grid.addEventListener('click',e=>{const m=e.target.closest('.mark');if(m)cycle(m)});grid.addEventListener('keydown',e=>{const m=e.target.closest('.mark');if(m&&(e.key==='Enter'||e.key===' ')){e.preventDefault();cycle(m)}});grid.addEventListener('input',save);
-document.querySelector('#reset').addEventListener('click',()=>{if(confirm('すべての記録を消去しますか？')){localStorage.removeItem(key);location.reload()}});
 </script>
 </body>
 </html>
