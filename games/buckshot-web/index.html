@@ -94,6 +94,34 @@
     .item-btn.facedown:after{content:"LR";inset:50% auto auto 50%;top:50%;left:50%;transform:translate(-50%,-50%);color:#d4ad66;font:700 1rem Georgia,serif;letter-spacing:.08em;text-shadow:0 2px 3px #000}.item-btn.facedown .card-icon,.item-btn.facedown strong,.item-btn.facedown .card-desc{visibility:hidden}
     .item-btn.empty{background:linear-gradient(145deg,#101510cc,#080b09e8);border:1px dashed #766443;color:#8f856e;box-shadow:inset 0 0 20px #0007}.item-btn.empty:before{border-color:#544932;box-shadow:none}.item-btn.empty:after{display:none}.item-btn.empty .card-icon{border-color:#5f5948;background:#111711;color:#777260;filter:none}
     @media(max-width:700px){#game.active .item-btn:before{inset:3px}#game.active .item-btn:after{top:5px;left:6px;font-size:.45rem}#game.active .item-btn strong{font-size:.58rem}#game.active .item-btn .card-icon{width:27px;height:27px;font-size:1rem}#game.active .item-btn.facedown:after{top:50%;left:50%;font-size:.72rem}#game.active .action-btn:active:not(:disabled){background:#3b2818;transform:scale(.98)}#game.active button.item-btn:active:not(:disabled){transform:rotate(var(--tilt,0deg)) translateY(-4px) scale(.97)}}
+    /* Compact setup screen so the primary start action stays above mobile browser chrome. */
+    @media(max-width:700px) and (orientation:portrait){
+      body:has(#setup.active){min-height:100dvh;overflow-x:hidden}
+      body:has(#setup.active) .shell{padding:5px 10px 10px}
+      body:has(#setup.active) .topbar{min-height:46px;margin:0 0 7px;padding:4px 7px 7px;background:#100906d9}
+      body:has(#setup.active) .mark{width:30px;height:30px;font-size:.7rem}
+      body:has(#setup.active) .brand{gap:9px}
+      body:has(#setup.active) .brand h1{font-size:1.2rem;letter-spacing:.12em}
+      #setup.active{margin:0 auto}
+      #setup.active .eyebrow{margin:0 0 5px;font-size:.57rem}
+      #setup.active h2{margin:0 0 7px;font-size:2.35rem;line-height:.88}
+      #setup.active .lede{display:-webkit-box;margin:0 0 10px;font-size:.78rem;line-height:1.4;overflow:hidden;-webkit-box-orient:vertical;-webkit-line-clamp:2}
+      #setup.active .setup-card{padding:11px 12px}
+      #setup.active .mode-tabs{margin-bottom:9px;padding:3px}
+      #setup.active .mode-tabs button{padding:8px 5px;font-size:.82rem}
+      #setup.active .count-row{margin-bottom:8px;gap:8px}
+      #setup.active .count-row>strong{font-size:.78rem;white-space:nowrap}
+      #setup.active .segmented{padding:2px}
+      #setup.active .segmented button{padding:6px 11px;font-size:.8rem}
+      #setup.active .names{gap:6px}
+      #setup.active .field label{margin-bottom:3px;font-size:.55rem}
+      #setup.active .field input{padding:8px 10px;font-size:.88rem}
+      #setup.active .start-btn{margin-top:9px;padding:11px 14px;font-size:.9rem}
+      #setup.active .multi-choice{margin-bottom:9px}
+      #setup.active .multi-choice button{padding:8px;font-size:.78rem}
+      #setup.active .net-status{margin-top:5px;font-size:.68rem}
+      #setup.active .lobby-list{margin:7px 0}
+    }
   </style>
 </head>
 <body>
