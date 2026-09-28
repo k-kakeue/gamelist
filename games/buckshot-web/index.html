@@ -61,7 +61,7 @@
       #game.active .arena{height:100%;min-height:0;overflow:hidden}
       #game.active .roundbar{flex:0 0 42px;padding:7px 10px}
       #game.active .round-no{font-size:.65rem}
-      #game.active .table{min-height:0;padding:118px 6px 4px;justify-content:flex-start;overflow:hidden}
+      #game.active .table{min-height:0;padding:94px 6px 4px;justify-content:flex-start;overflow:hidden}
       #game.active .seat{min-width:100px;padding:4px 7px}
       #game.active .seat b{font-size:.68rem}
       #game.active .seat small{font-size:.5rem}
@@ -75,9 +75,9 @@
       #game.active .prompt{min-height:28px;font-size:1.05rem;line-height:1.35}
       #game.active .subprompt{font-size:.68rem;line-height:1.3;margin:0 0 6px}
       #game.active .actions{gap:6px;width:100%}
-      #game.active .action-btn{min-width:0;min-height:40px;padding:8px 6px;font-size:.78rem}
-      #game.active .item-tray{min-height:80px;height:80px;margin-top:6px}
-      #game.active .item-btn{width:62px;height:78px;margin:0 -3px;padding:5px 3px;border-width:1px;border-radius:5px;font-size:.58rem;gap:2px}
+      #game.active .action-btn{min-width:0;min-height:46px;padding:10px 7px;font-size:.8rem;touch-action:manipulation;-webkit-tap-highlight-color:#d3aa5833}
+      #game.active .item-tray{min-height:86px;height:86px;margin-top:7px}
+      #game.active .item-btn{width:66px;height:84px;margin:0 -2px;padding:5px 3px;border-width:1px;border-radius:5px;font-size:.6rem;gap:2px;touch-action:manipulation;-webkit-tap-highlight-color:#d3aa5833}
       #game.active .item-btn .card-icon{font-size:1.25rem}
       #game.active .item-btn .card-desc{display:none}
     }
@@ -93,7 +93,7 @@
     .item-btn.facedown:before{inset:5px;border:1px double #bd9153;box-shadow:inset 0 0 0 3px #24140d;background:radial-gradient(circle at center,#4d2918 0 18%,transparent 19%)}
     .item-btn.facedown:after{content:"LR";inset:50% auto auto 50%;top:50%;left:50%;transform:translate(-50%,-50%);color:#d4ad66;font:700 1rem Georgia,serif;letter-spacing:.08em;text-shadow:0 2px 3px #000}.item-btn.facedown .card-icon,.item-btn.facedown strong,.item-btn.facedown .card-desc{visibility:hidden}
     .item-btn.empty{background:linear-gradient(145deg,#101510cc,#080b09e8);border:1px dashed #766443;color:#8f856e;box-shadow:inset 0 0 20px #0007}.item-btn.empty:before{border-color:#544932;box-shadow:none}.item-btn.empty:after{display:none}.item-btn.empty .card-icon{border-color:#5f5948;background:#111711;color:#777260;filter:none}
-    @media(max-width:700px){#game.active .item-btn:before{inset:3px}#game.active .item-btn:after{top:5px;left:6px;font-size:.45rem}#game.active .item-btn strong{font-size:.58rem}#game.active .item-btn .card-icon{width:27px;height:27px;font-size:1rem}#game.active .item-btn.facedown:after{top:50%;left:50%;font-size:.72rem}}
+    @media(max-width:700px){#game.active .item-btn:before{inset:3px}#game.active .item-btn:after{top:5px;left:6px;font-size:.45rem}#game.active .item-btn strong{font-size:.58rem}#game.active .item-btn .card-icon{width:27px;height:27px;font-size:1rem}#game.active .item-btn.facedown:after{top:50%;left:50%;font-size:.72rem}#game.active .action-btn:active:not(:disabled){background:#3b2818;transform:scale(.98)}#game.active button.item-btn:active:not(:disabled){transform:rotate(var(--tilt,0deg)) translateY(-4px) scale(.97)}}
   </style>
 </head>
 <body>
