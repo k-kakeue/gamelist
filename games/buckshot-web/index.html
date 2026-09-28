@@ -61,14 +61,14 @@
       #game.active .arena{height:100%;min-height:0;overflow:hidden}
       #game.active .roundbar{flex:0 0 42px;padding:7px 10px}
       #game.active .round-no{font-size:.65rem}
-      #game.active .table{min-height:0;padding:72px 6px 4px;justify-content:flex-start;overflow:hidden}
+      #game.active .table{min-height:0;padding:118px 6px 4px;justify-content:flex-start;overflow:hidden}
       #game.active .seat{min-width:100px;padding:4px 7px}
       #game.active .seat b{font-size:.68rem}
       #game.active .seat small{font-size:.5rem}
       #game.active .seat-hearts{gap:3px;margin:3px 0}
       #game.active .seat-heart{width:15px;height:6px}
-      #game.active .seat.top{top:6px}
-      #game.active .seat.left,#game.active .seat.right{top:58px}
+      #game.active .seat.top{top:18px}
+      #game.active .seat.left,#game.active .seat.right{top:70px}
       #game.active .seat.you{left:4px;bottom:4px;min-width:96px}
       #game.active .turn-label{margin:0 0 2px;padding:5px 10px;font-size:.66rem}
       #game.active .weapon{width:72%;height:80px;margin:1px auto 3px;transform:rotate(-3deg) scale(.92)}
@@ -81,6 +81,19 @@
       #game.active .item-btn .card-icon{font-size:1.25rem}
       #game.active .item-btn .card-desc{display:none}
     }
+    /* Antique item cards: ivory fronts, brass filigree and leather backs. */
+    .item-btn{position:relative;isolation:isolate;overflow:hidden;border:1px solid #b68a47;background:radial-gradient(circle at 50% 38%,#f5e9ca 0,#dec99a 48%,#b99961 100%);color:#25170d;box-shadow:0 9px 20px #000b,0 2px 0 #e7d39e inset,0 0 0 3px #2a190e;letter-spacing:.03em}
+    .item-btn:before{content:"";position:absolute;inset:4px;z-index:-1;border:1px solid #79552a;border-radius:4px;box-shadow:inset 0 0 0 1px #d6bb7d;pointer-events:none}
+    .item-btn:after{content:"◆";position:absolute;top:6px;left:8px;color:#74441f;font-size:.55rem;line-height:1;opacity:.9}
+    .item-btn>*{position:relative;z-index:1}.item-btn strong{font-family:Georgia,'Times New Roman','Noto Sans JP',serif;font-size:.78rem;line-height:1.15;color:#29180d;text-shadow:0 1px #fff7}
+    .item-btn .card-icon{display:grid;place-items:center;width:38px;height:38px;border:1px solid #765027;border-radius:50%;background:radial-gradient(circle,#ede0bd 42%,#b99357 44%,#dcc58d 58%,#6d4824 60%,#d8c28b 64%);color:#342116;font-size:1.45rem;filter:drop-shadow(0 2px 1px #fff5)}
+    .item-btn .card-desc{max-width:72px;color:#57432d;font-family:Georgia,'Times New Roman','Noto Sans JP',serif;font-size:.55rem;line-height:1.25}
+    .item-btn:hover:not(:disabled){border-color:#f0ca74;color:#25170d;box-shadow:0 16px 28px #000c,0 0 18px #d8aa4a66,0 0 0 3px #3a2512}
+    .item-btn.facedown{background:repeating-conic-gradient(from 45deg,#351b12 0 12.5%,#1b0e0a 0 25%);background-size:18px 18px;border-color:#ad8146;color:#d4ac63;box-shadow:0 9px 20px #000b,0 0 0 3px #24120c,inset 0 0 24px #0008}
+    .item-btn.facedown:before{inset:5px;border:1px double #bd9153;box-shadow:inset 0 0 0 3px #24140d;background:radial-gradient(circle at center,#4d2918 0 18%,transparent 19%)}
+    .item-btn.facedown:after{content:"LR";inset:50% auto auto 50%;top:50%;left:50%;transform:translate(-50%,-50%);color:#d4ad66;font:700 1rem Georgia,serif;letter-spacing:.08em;text-shadow:0 2px 3px #000}.item-btn.facedown .card-icon,.item-btn.facedown strong,.item-btn.facedown .card-desc{visibility:hidden}
+    .item-btn.empty{background:linear-gradient(145deg,#101510cc,#080b09e8);border:1px dashed #766443;color:#8f856e;box-shadow:inset 0 0 20px #0007}.item-btn.empty:before{border-color:#544932;box-shadow:none}.item-btn.empty:after{display:none}.item-btn.empty .card-icon{border-color:#5f5948;background:#111711;color:#777260;filter:none}
+    @media(max-width:700px){#game.active .item-btn:before{inset:3px}#game.active .item-btn:after{top:5px;left:6px;font-size:.45rem}#game.active .item-btn strong{font-size:.58rem}#game.active .item-btn .card-icon{width:27px;height:27px;font-size:1rem}#game.active .item-btn.facedown:after{top:50%;left:50%;font-size:.72rem}}
   </style>
 </head>
 <body>
