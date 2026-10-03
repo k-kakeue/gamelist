@@ -183,7 +183,7 @@
         <div class="online-box" id="onlineBox">
           <div class="multi-choice" id="multiChoice"><button data-multi="host" class="on">部屋を作る</button><button data-multi="join">コードで参加</button></div>
           <div class="field"><label>YOUR NAME</label><input id="onlineName" maxlength="12" value="プレイヤー" aria-label="あなたの名前"></div>
-          <div id="joinFields" class="field" style="margin-top:12px"><label>ROOM CODE</label><div class="room-row"><input id="roomInput" maxlength="6" placeholder="例：K7M2QX" autocomplete="off" style="text-transform:uppercase"><button id="connectBtn">参加</button></div></div>
+          <div id="joinFields" class="field" style="margin-top:12px"><label>ルームコード（数字6桁）</label><div class="room-row"><input id="roomInput" type="text" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="例：123456" autocomplete="off" aria-label="数字6桁のルームコード"><button id="connectBtn">参加</button></div></div>
           <button class="start-btn" id="createBtn">ルームを作る</button><div id="roomCode" class="room-code" hidden></div>
           <div id="netStatus" class="net-status"></div><div id="lobbyList" class="lobby-list"></div>
           <button class="start-btn" id="hostStartBtn" hidden disabled>2人以上でゲーム開始</button>
@@ -255,16 +255,46 @@
     function esc(s){return s.replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]))}
     function showEnd(){const w=state.players[living()[0]],winner=w?esc(w.name).replace(/\d+/g,'<span class="result-number">$&</span>')+' の勝利':'引き分け';$('#winner').innerHTML=winner;$('#resultText').innerHTML=`<span class="result-number">${state.round}</span>ラウンドを生き残りました。`;$('#overlay').classList.add('show')}
     function end(){state.gameOver=true;showEnd();broadcast()}
-    function reset(){if(peer)peer.destroy();peer=null;connections=[];lobby=[];mode='solo';lastTurnReveal='';lastShotShown=0;lastItemEjectShown=0;lastRenderedHp=null;cpuDecisionKey='';cpuItemsUsed=0;clearTimeout(turnRevealTimer);clearTimeout(shotResultTimer);clearTimeout(casingTimer);clearTimeout(cpuTimer);$('#ammoReveal').classList.remove('show');$('#shotResult').classList.remove('show');$('#overlay').classList.remove('show');$('#game').classList.remove('active');$('#setup').classList.add('active');$$('#modeTabs button').forEach(b=>b.classList.toggle('on',b.dataset.mode==='solo'));$('#localBox').hidden=false;$('#onlineBox').classList.remove('show');document.querySelector('.top-note').textContent='SOLO // PLAYER VS CPU';busy=false}
+    function reset(){clearNetwork();state=null;peer=null;connections=[];lobby=[];mode='solo';lastTurnReveal='';lastShotShown=0;lastItemEjectShown=0;lastRenderedHp=null;cpuDecisionKey='';cpuItemsUsed=0;clearTimeout(turnRevealTimer);clearTimeout(shotResultTimer);clearTimeout(casingTimer);clearTimeout(cpuTimer);$('#ammoReveal').classList.remove('show');$('#shotResult').classList.remove('show');$('#overlay').classList.remove('show');$('#game').classList.remove('active');$('#setup').classList.add('active');$$('#modeTabs button').forEach(b=>b.classList.toggle('on',b.dataset.mode==='solo'));$('#localBox').hidden=false;$('#onlineBox').classList.remove('show');document.querySelector('.top-note').textContent='SOLO // PLAYER VS CPU';busy=false}
     function setStatus(text){$('#netStatus').textContent=text}
     function drawLobby(list=lobby){$('#lobbyList').innerHTML=list.map((p,i)=>`<span class="lobby-chip">${i===0?'♛ ':''}${esc(p.name)}</span>`).join('');if(isHost())$('#hostStartBtn').disabled=list.length<2}
     function cleanName(){return $('#onlineName').value.trim().slice(0,12)||'プレイヤー'}
-    function roomCode(){const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';return Array.from({length:6},()=>chars[Math.floor(Math.random()*chars.length)]).join('')}
-    function selectMode(next){mode=next;const multi=next==='host'||next==='join';$$('#modeTabs button').forEach(b=>b.classList.toggle('on',b.dataset.mode===(multi?'multi':'solo')));$$('#multiChoice button').forEach(b=>b.classList.toggle('on',b.dataset.multi===next));$('#localBox').hidden=next!=='solo';$('#onlineBox').classList.toggle('show',multi);$('#joinFields').hidden=next!=='join';$('#createBtn').hidden=next!=='host';$('#hostStartBtn').hidden=true;$('#roomCode').hidden=true;$('#lobbyList').innerHTML='';setStatus(next==='host'?'名前を決めてルームを作ってください':next==='join'?'名前と6文字のコードを入力してください':'');document.querySelector('.top-note').textContent=next==='solo'?'SOLO // PLAYER VS CPU':'ONLINE // 2–4 PLAYERS'}
-    function setupHost(){if(typeof Peer==='undefined')return setStatus('接続ライブラリを読み込めませんでした。通信環境を確認してください。');const code=roomCode();setStatus('ルームを準備中…');peer=new Peer('last-round-'+code.toLowerCase());peer.on('open',()=>{lobby=[{name:cleanName(),index:0}];myIndex=0;$('#roomCode').textContent=code;$('#roomCode').hidden=false;$('#createBtn').hidden=true;$('#hostStartBtn').hidden=false;setStatus('コードを仲間に伝えてください');drawLobby();peer.on('connection',acceptGuest)});peer.on('error',e=>setStatus(e.type==='unavailable-id'?'コードが重複しました。もう一度ルームを作ってください':'接続できませんでした。もう一度お試しください。'))}
+    function roomCode(){return Array.from({length:6},()=>Math.floor(Math.random()*10)).join('')}
+    function normalizeRoomCode(value){return value.replace(/[０-９]/g,c=>String.fromCharCode(c.charCodeAt(0)-0xFEE0)).replace(/\D/g,'').slice(0,6)}
+    let networkTimer=null;
+    function clearNetwork(){clearTimeout(networkTimer);const previous=peer;peer=null;hostConn=null;connections=[];lobby=[];if(previous)previous.destroy();$('#connectBtn').disabled=false;$('#createBtn').disabled=false}
+    function networkFailure(attempt,message){if(peer!==attempt)return;setStatus(message);if($('#game').classList.contains('active'))return;clearNetwork();$('#roomCode').hidden=true;$('#hostStartBtn').hidden=true;$('#createBtn').hidden=mode!=='host';$('#lobbyList').innerHTML=''}
+    function selectMode(next){clearNetwork();mode=next;const multi=next==='host'||next==='join';$$('#modeTabs button').forEach(b=>b.classList.toggle('on',b.dataset.mode===(multi?'multi':'solo')));$$('#multiChoice button').forEach(b=>b.classList.toggle('on',b.dataset.multi===next));$('#localBox').hidden=next!=='solo';$('#onlineBox').classList.toggle('show',multi);$('#joinFields').hidden=next!=='join';$('#createBtn').hidden=next!=='host';$('#hostStartBtn').hidden=true;$('#roomCode').hidden=true;$('#lobbyList').innerHTML='';setStatus(next==='host'?'名前を決めてルームを作ってください':next==='join'?'名前と数字6桁のコードを入力してください':'');document.querySelector('.top-note').textContent=next==='solo'?'SOLO // PLAYER VS CPU':'ONLINE // 2–4 PLAYERS'}
+    function setupHost(){
+      if(typeof Peer==='undefined')return setStatus('接続ライブラリを読み込めませんでした。通信環境を確認してください。');
+      clearNetwork();const code=roomCode(),attempt=new Peer('last-round-'+code);peer=attempt;$('#createBtn').disabled=true;setStatus('ルームを準備中…');
+      networkTimer=setTimeout(()=>networkFailure(attempt,'ルームの準備が時間切れになりました。もう一度作成してください。'),15000);
+      attempt.on('connection',conn=>{if(peer===attempt)acceptGuest(conn)});
+      attempt.on('open',()=>{if(peer!==attempt)return;clearTimeout(networkTimer);lobby=[{name:cleanName(),index:0}];myIndex=0;$('#roomCode').textContent=code;$('#roomCode').hidden=false;$('#createBtn').hidden=true;$('#hostStartBtn').hidden=false;setStatus('数字6桁のコードを仲間に伝えてください');drawLobby()});
+      attempt.on('error',e=>networkFailure(attempt,e.type==='unavailable-id'?'コードが重複しました。もう一度作成すると新しいコードになります。':'接続できませんでした。もう一度お試しください。'));
+    }
     function acceptGuest(conn){if(state||lobby.length>=4){conn.on('open',()=>conn.send({type:'reject',message:state?'ゲームは開始済みです':'ルームは満員です'}));return}conn.on('data',msg=>{if(msg.type==='join'&&!conn.playerIndex){conn.playerIndex=lobby.length;lobby.push({name:String(msg.name||'プレイヤー').slice(0,12),index:conn.playerIndex});connections.push(conn);conn.send({type:'joined',index:conn.playerIndex,lobby:lobby.map(x=>({name:x.name,index:x.index}))});connections.forEach(c=>{if(c.open)c.send({type:'lobby',lobby:lobby.map(x=>({name:x.name,index:x.index}))})});drawLobby()}else if(msg.type==='action'&&state&&msg.actor===conn.playerIndex&&state.current===conn.playerIndex&&!busy){if(msg.action==='shoot')shoot(Number(msg.target),Number(msg.target)===state.current);if(msg.action==='item')useItem(msg.key)}});conn.on('close',()=>{if(!state&&conn.playerIndex){lobby=lobby.filter(x=>x.index!==conn.playerIndex);connections=connections.filter(x=>x!==conn);lobby.forEach((x,i)=>x.index=i);connections.forEach((x,i)=>x.playerIndex=i+1);drawLobby();connections.forEach(c=>c.send({type:'lobby',lobby}))}})}
-    function joinRoom(){if(typeof Peer==='undefined')return setStatus('接続ライブラリを読み込めませんでした。通信環境を確認してください。');const code=$('#roomInput').value.trim().toUpperCase();if(!/^[A-Z2-9]{6}$/.test(code))return setStatus('6文字のルームコードを入力してください');setStatus('ルームに接続中…');peer=new Peer();peer.on('open',()=>{hostConn=peer.connect('last-round-'+code.toLowerCase(),{reliable:true});hostConn.on('open',()=>hostConn.send({type:'join',name:cleanName()}));hostConn.on('data',msg=>{if(msg.type==='reject')setStatus(msg.message);if(msg.type==='joined'){myIndex=msg.index;drawLobby(msg.lobby);setStatus('参加しました。ホストの開始を待っています。');$('#connectBtn').disabled=true}if(msg.type==='lobby')drawLobby(msg.lobby);if(msg.type==='state'){state=msg.state;if($('#setup').classList.contains('active'))enterGame();render();if(state.gameOver)showEnd()}});hostConn.on('close',()=>setStatus('ホストとの接続が切れました'))});peer.on('error',()=>setStatus('ルームが見つからないか、接続に失敗しました。'))}
-    $$('#modeTabs button').forEach(b=>b.onclick=()=>selectMode(b.dataset.mode==='multi'?'host':'solo'));$$('#multiChoice button').forEach(b=>b.onclick=()=>selectMode(b.dataset.multi));$('#createBtn').onclick=setupHost;$('#connectBtn').onclick=joinRoom;$('#roomInput').oninput=e=>e.target.value=e.target.value.toUpperCase().replace(/[^A-Z2-9]/g,'');
+    function joinRoom(){
+      if(typeof Peer==='undefined')return setStatus('接続ライブラリを読み込めませんでした。通信環境を確認してください。');
+      const code=normalizeRoomCode($('#roomInput').value);$('#roomInput').value=code;if(!/^[0-9]{6}$/.test(code))return setStatus('数字6桁のルームコードを入力してください');
+      clearNetwork();const attempt=new Peer();peer=attempt;$('#connectBtn').disabled=true;setStatus('ルームに接続中…');
+      networkTimer=setTimeout(()=>networkFailure(attempt,'接続が時間切れになりました。コードを確認して再参加してください。'),15000);
+      attempt.on('open',()=>{
+        if(peer!==attempt)return;const conn=attempt.connect('last-round-'+code,{reliable:true});hostConn=conn;
+        conn.on('open',()=>{if(peer===attempt)conn.send({type:'join',name:cleanName()})});
+        conn.on('data',msg=>{
+          if(peer!==attempt)return;
+          if(msg.type==='reject')return networkFailure(attempt,msg.message);
+          if(msg.type==='joined'){clearTimeout(networkTimer);myIndex=msg.index;drawLobby(msg.lobby);setStatus('参加しました。ホストの開始を待っています。');$('#connectBtn').disabled=true}
+          if(msg.type==='lobby')drawLobby(msg.lobby);
+          if(msg.type==='state'){state=msg.state;if($('#setup').classList.contains('active'))enterGame();render();if(state.gameOver)showEnd()}
+        });
+        conn.on('close',()=>networkFailure(attempt,'ホストとの接続が切れました。'));
+        conn.on('error',()=>networkFailure(attempt,'接続に失敗しました。コードを確認して再参加してください。'));
+      });
+      attempt.on('error',()=>networkFailure(attempt,'ルームが見つからないか、接続に失敗しました。コードを確認して再参加してください。'));
+    }
+    $$('#modeTabs button').forEach(b=>b.onclick=()=>selectMode(b.dataset.mode==='multi'?'host':'solo'));$$('#multiChoice button').forEach(b=>b.onclick=()=>selectMode(b.dataset.multi));$('#createBtn').onclick=setupHost;$('#connectBtn').onclick=joinRoom;$('#roomInput').oninput=e=>e.target.value=normalizeRoomCode(e.target.value);
     $('#hostStartBtn').onclick=()=>{if(lobby.length<2)return;state=makeState(lobby.map(x=>x.name));enterGame();newRound()};
     $('#startBtn').onclick=start;$('#againBtn').onclick=reset;
     document.addEventListener('keydown',e=>{if(!state||!$('#game').classList.contains('active')||busy||!canAct())return;if(e.key>='1'&&e.key<='4'){const i=+e.key-1;if(state.players[i]&&state.players[i].hp>0)requestShoot(i)}});
